@@ -1,24 +1,24 @@
-# olte
+# olite
 
-> Template engine build on top of the [Oli][oli] language for JavaScript engines
+> Markup template engine build on top of the [Oli][oli] language for node and the browser
 
 > **work in progress!**
 
 ## About
 
-Olte is the acronim of Oli Language Templating Engine.
-It uses the [JavaScript][oli-js] parser and compiler of the Oli language
+Olite is the acronim of Oli templating engine.
+It uses the [JavaScript][oli-js] parser and compiler of the Oli language 
 
 ## Installation
 
 Node.js 
 ```
-$ npm install -g olte
+$ npm install -g olite
 ```
 
 Browser (via Bower)
 ```
-$ bower install olte
+$ bower install olite
 ```
 
 ## Environments
