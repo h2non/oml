@@ -4,7 +4,7 @@
 
 ## About
 
-**oml** (Oli Markup Language) is a markup template engine build on top of the [Oli][oli] language for node and the browser
+**oml** (Oli Markup Language) is a template engine build on top of the [Oli][oli] language for node and the browser
 It's powered by the Oli [JavaScript][oli-js] parser and compiler
 
 ## Features
