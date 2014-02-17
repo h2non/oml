@@ -182,7 +182,7 @@ end
 
 ### Includes
 
-```
+```ruby
 include: path/to/file.oli
 ```
 
