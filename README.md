@@ -1,20 +1,28 @@
 # oml
 
-> Markup template engine build on top of the [Oli][oli] language for node and the browser
-
 > **SPOILER! Work in progress**
 
 ## About
 
-OML is the acronim of Oli Markup Language. 
-It uses the [JavaScript][oli-js] parser and compiler of the Oli language 
+**oml** is a markup template engine build on top of the Oli][oli] language for node and the browser
+It is powered by the Oli [JavaScript][oli-js] parser and compiler implementation
+
+It is the acronim of Oli Markup Language
+
+## Features
+
+- Pretty and minimalist syntax
+- Built-in support for data references
+- Support mixins and includes (upcoming)
+- Runs over node and browers
+- No third party dependencies
 
 ## Installation
 
 #### Node.js
 
 ```
-$ npm install omljs --save
+$ npm install omljs
 ```
 For CLI usage only, it's recommented you install it as global package
 ```
@@ -24,7 +32,7 @@ $ npm install -g omljs
 #### Browser (via Bower)
 
 ```
-$ bower install oli --save
+$ bower install oml --save
 ```
 
 Or load the script remotely (just for testing or development)
@@ -43,9 +51,86 @@ To disable the automatic parsing, just add `data-ignore` attribute in the script
 - Node.js >= 0.8.0
 - Chrome
 - Firefox
-- Safari
-- Opera
-- IE >= 9 
+- Safari 5
+- Opera >= 11.6
+- IE >= 9
+
+## Upcoming features
+
+- Mixins
+- Includes
+
+## Syntax Reference
+
+### Doctype
+
+The document can be defined define the following doctypes:
+
+```html
+xml <?xml version="1.0" encoding="utf-8" ?>
+transitional <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+strict <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+frameset <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
+1.1 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+basic <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd">
+mobile <!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.2//EN" "http://www.openmobilealliance.org/tech/DTD/xhtml-mobile12.dtd">
+```
+
+Example
+```ruby
+doctype html
+```
+
+### Tags
+
+```ruby
+ul:
+  li: Apple
+  li: Banana
+  li: Coco
+end
+```
+Self-closing tags
+```ruby
+!img
+```
+
+#### Literal shortcuts
+
+##### Class
+```jade
+a.button 
+```
+```html
+<a class="button"></a>
+```
+```jade
+.content 
+```
+```html
+<div class="content"></div>
+```
+
+##### ID
+```jade
+a#button 
+```
+```html
+<a id="button"></a>
+```
+```jade
+#content
+```
+```html
+<div id="content"></div>
+```
+
+### Attributes
+
+```ruby
+a(href:'google.com'): Google
+a(class: 'button', href: 'me.com'):> My Web Site
+```
 
 
 [oli-js]: https://github.com/oli-lang/oli-js
