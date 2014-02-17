@@ -12,7 +12,7 @@ It's powered by the Oli [JavaScript][oli-js] parser and compiler
 - Pretty and minimalist syntax
 - Built-in support for data references
 - Support mixins and includes (upcoming)
-- Runs over node and browers
+- Runs over node and browsers
 - No third party dependencies
 
 ## Installation
@@ -129,6 +129,69 @@ a#button
 a(href:'google.com'): Google
 a(class: 'button', href: 'me.com'):> My Web Site
 ```
+
+### Blocks
+
+```ruby
+div:- 
+  p: This is a plain text
+end
+```
+
+You also can interpolate html tags
+```ruby
+div:
+  p:- This is a plain <strong>text</strong>
+end
+```
+
+#### Plain text
+
+```ruby
+script(type: text/javascript):>
+  if (foo) {
+     bar(1 + 5)
+  }
+end
+```
+
+### Comments
+
+**Line comments**
+```ruby
+# this is
+# a comment
+```
+
+**Block comments**
+```ruby
+##
+  This is a block comment
+##
+```
+
+### Mixins
+
+```ruby
+mixin (title):
+  h1: @title
+  p: This is a paragraph
+end
++mixin()
+```
+
+### Includes
+
+```
+include: path/to/file.oli
+```
+
+
+## License
+
+Copyright (c) Tomas Aparicio
+
+Released under the MIT license
 
 
 [oli-js]: https://github.com/oli-lang/oli-js
