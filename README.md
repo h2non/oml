@@ -1,19 +1,23 @@
 # oml
+[![Build Status](https://travis-ci.org/h2non/oml.png)](https://travis-ci.org/h2non/oml)
+[![Dependency Status](https://gemnasium.com/h2non/oml.png)](https://gemnasium.com/h2non/oml)
 
 > **SPOILER! Work in progress**
 
 ## About
 
-**oml** (Oli Markup Language) is a template engine build on top of the [Oli][oli] language for node and the browser.
+**oml** (Oli Markup Language) is a template engine built on top of the [Oli][oli] language for node and the browser.
 It's powered by the Oli [JavaScript][oli-js] parser and compiler
 
 ## Features
 
 - Pretty and minimalist syntax
 - Built-in support for data references
-- Support mixins and includes (upcoming)
+- Generates pretty well-indended code
+- Support mixins and includes
 - Runs over node and browsers
 - No third party dependencies
+- Based in a coolish Oli language
 
 ## Installation
 
@@ -52,11 +56,6 @@ To disable the automatic parsing, just add `data-ignore` attribute in the script
 - Safari 5
 - Opera >= 11.6
 - IE >= 9
-
-## Upcoming features
-
-- Mixins
-- Includes
 
 ## Syntax Reference
 
@@ -177,7 +176,7 @@ mixin (title):
   h1: @title
   p: This is a paragraph
 end
-+mixin()
+mixin('name')!
 ```
 
 ### Includes

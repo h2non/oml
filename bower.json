@@ -1,0 +1,42 @@
+{
+  "name": "oml",
+  "version": "0.1.0",
+  "description": "Template engine built on top of the Oli language",
+  "homepage": "http://github.com/h2non/oml",
+  "bugs": "https://github.com/h2non/oml/issues",
+  "author": {
+    "name": "Tomas Aparicio"
+  },
+  "license": "MIT",
+  "main": "./oml.js",
+  "homepage": "https://github.com/h2non/oml",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/h2non/oml.git"
+  },
+  "keywords": [
+    "template",
+    "templating",
+    "html",
+    "xml",
+    "jade",
+    "haml",
+    "engine",
+    "markup"
+    "swig"
+  ],
+  "ignore": [
+    "**/.*",
+    ".*",
+    "src",
+    "lib",
+    "bin",
+    "test",
+    "Gruntfile.*",
+    ".editorconfig",
+    ".gitignore",
+    ".travis.yml",
+    ".npmignore",
+    "package.json"
+  ]
+}
