@@ -45,7 +45,7 @@
     "grunt-contrib-uglify": "~0.4.0"
   },
   "dependencies": {
-    "htgen": "~0.1.2",
+    "htgen": "~0.1.4",
     "commander": "~2.1.0"
   }
 }
