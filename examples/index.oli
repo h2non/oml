@@ -1,0 +1,22 @@
+doctype html
+html(lang: "en"):
+  head
+    title: pageTitle
+    script(type: 'text/javascript'):>
+      if (foo) {
+         bar(1 + 5)
+      }
+    end
+  end
+  body
+    h1: Oml - template engine
+    .col@container:
+      p:-
+        Jade is a terse and simple
+        templating language with a
+        strong focus on performance
+        and powerful features.
+      end
+    end
+  end
+end

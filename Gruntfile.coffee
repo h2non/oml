@@ -9,7 +9,7 @@ module.exports = (grunt) ->
   grunt.initConfig
     pkg: grunt.file.readJSON 'package.json'
 
-    clean: ['htgen.js', 'lib', 'test/*.js', 'test/fixtures/.tmp/**']
+    clean: ['lib', 'test/*.js', 'test/fixtures/.tmp/**']
 
     livescript:
       options:
@@ -36,9 +36,31 @@ module.exports = (grunt) ->
     browserify:
       oli:
         options:
-          standalone: 'htgen'
+          standalone: 'oml'
         files:
-          'htgen.js': 'lib/htgen.js'
+          'oml.js': 'lib/oml.js'
+
+    uglify:
+      options:
+        beautify:
+          beautify: yes
+          indent_level: 2
+        mangle: no
+        compress: no
+        report: 'min'
+        banner: '/*! oml.js - v<%= pkg.version %> - MIT License - https://github.com/h2non/oml ' +
+          '| Generated <%= grunt.template.today("yyyy-mm-dd hh:MM") %> */\n'
+      debug:
+        files:
+          'oml.js': ['oml.js']
+      min:
+        options:
+          beautify: no
+          mangle: yes
+          compress: yes
+          report: 'min'
+        files:
+          'oml.min.js': ['oml.js']
 
     watch:
       options:
@@ -64,6 +86,7 @@ module.exports = (grunt) ->
   grunt.registerTask 'build', [
     'test'
     'browserify'
+    'uglify'
   ]
 
   grunt.registerTask 'zen', [

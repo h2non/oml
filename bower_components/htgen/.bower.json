@@ -1,0 +1,48 @@
+{
+  "name": "htgen",
+  "version": "0.1.2",
+  "description": "Simple but featured hypertext markup code generator",
+  "homepage": "https://github.com/h2non/htgen",
+  "bugs": "https://github.com/h2non/htgen/issues",
+  "author": {
+    "name": "Tomas Aparicio"
+  },
+  "license": "MIT",
+  "main": "./htgen.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/h2non/htgen.git"
+  },
+  "keywords": [
+    "markup",
+    "generator",
+    "html",
+    "xml",
+    "generate",
+    "code"
+  ],
+  "ignore": [
+    "**/.*",
+    ".*",
+    "src",
+    "lib",
+    "bin",
+    "test",
+    "Gruntfile.*",
+    ".editorconfig",
+    ".gitignore",
+    ".travis.yml",
+    ".npmignore",
+    "package.json"
+  ],
+  "_release": "0.1.2",
+  "_resolution": {
+    "type": "version",
+    "tag": "0.1.2",
+    "commit": "0765fd656499179255fa529f81ced9310de99082"
+  },
+  "_source": "git://github.com/h2non/htgen.git",
+  "_target": "~0.1.2",
+  "_originalSource": "htgen",
+  "_direct": true
+}

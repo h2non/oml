@@ -1,0 +1,24 @@
+
+a(href='#'): 
+  | some link
+
+form:
+  label Username:
+    input(type: 'text', name: 'user[name]')
+    p:-
+      Just an example of some text usage.
+      You can have <em>inline</em> html,
+      as well as
+    end
+    p:= 
+      Interpolation is also supported. 
+      The username is 
+        currently *name
+    end
+  end
+  label Email:
+    input(type: 'text', name: 'user[email]')
+    p:
+      | Email must be valid
+  end
+end

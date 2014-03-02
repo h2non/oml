@@ -1,0 +1,5 @@
+script:>
+  if (foo) {
+    bar(2 ^ 2)
+  }
+end

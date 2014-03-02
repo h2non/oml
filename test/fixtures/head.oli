@@ -1,0 +1,5 @@
+head:
+  title: Oml
+  script(src: '/javascripts/jquery.js')
+  script(src: '/javascripts/app.js')
+end
