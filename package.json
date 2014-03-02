@@ -31,6 +31,11 @@
     "haml",
     "markup"
   ],
+  "dependencies": {
+    "htgen": "~0.1.4",
+    "commander": "~2.1.0",
+    "oli": "~0.1.0"
+  },
   "devDependencies": {
     "grunt-mocha-cli": "~1.0.3",
     "grunt-contrib-watch": "~0.5.0",
@@ -43,9 +48,5 @@
     "browserify": "~3.29.0",
     "grunt-browserify": "~1.3.1",
     "grunt-contrib-uglify": "~0.4.0"
-  },
-  "dependencies": {
-    "htgen": "~0.1.4",
-    "commander": "~2.1.0"
   }
 }

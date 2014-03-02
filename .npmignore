@@ -7,4 +7,5 @@ test/
 .tmp
 bower.json
 Gruntfile.coffee
-/htgen.js
+/oml.js
+/oml.min.js
