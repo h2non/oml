@@ -268,8 +268,38 @@ describe 'Render', ->
           end
           '''
           expect render code .to.be.equal (
-            '<html><head><title>Oml</title><script><script src="/javascripts/jquery.js">' +
-            '</script></script><script><script src="/javascripts/app.js"></script>' +
+            '<html><head><title>Oml</title><script src="/src.js">' +
+            '</script><script src="/src2.js">' +
             '</script></head><body><h1>title</h1><p>Content</p></body></html>'
           )
+
+    describe 'mixin', (_) ->
+
+      it 'should define a mixin', ->
+        code = '''
+        mixin test:
+          p: Hello
+        end
+        '''
+        expect render code .to.be.equal '<p>Hello</p>'
+
+      # full support in progress
+      it 'should define a mixin with arguments', ->
+        code = '''
+        mixin test(title, text):
+          h1: $title
+          p: $text
+        end
+        '''
+        expect render code .to.be.equal '<h1>$title</h1><p>$text</p>'
+
+      xit 'should call a mixin', ->
+        code = '''
+        mixin test:
+          p: Hello
+        end
+        +test
+        '''
+        expect render code .to.be.equal '<p>Hello</p>'
+
 

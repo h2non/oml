@@ -1,4 +1,4 @@
-/*! oml.js - v0.1.0 - MIT License - https://github.com/h2non/oml | Generated 2014-03-02 04:00 */
+/*! oml.js - v0.1.0 - MIT License - https://github.com/h2non/oml | Generated 2014-03-02 01:44 */
 !function(e) {
   if ("object" == typeof exports) module.exports = e(); else if ("function" == typeof define && define.amd) define(e); else {
     var f;
@@ -100,7 +100,7 @@
       "/Users/h2non/projects/oml/node_modules/grunt-browserify/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js": 5
     } ],
     2: [ function(_dereq_, module, exports) {
-      var fs, oli, walk, ht, ref$, isObject, isArray, isString, isUndef, isArrayStrings, cwd, has, oml, exports, defaults, render, visitor, process, readFile, fileExt, normalize, isDoctype;
+      var fs, oli, walk, ht, ref$, isObject, isArray, isString, isUndef, isArrayStrings, cwd, has, oml, exports, defaults, render, visitor, process, processMixin, processArray, readFile, fileExt, getMixinName, getMixinBody, getMixinArgs, normalize, isDoctype, isMixin;
       fs = _dereq_("fs");
       oli = _dereq_("oli");
       walk = _dereq_("./walk");
@@ -118,21 +118,30 @@
         return render(oli.parse(String(code), options), options);
       };
       render = function(obj, options) {
-        var buf;
+        var buf, separator;
         options == null && (options = defaults);
         buf = [];
+        separator = options.pretty === true ? "\n" : "";
         if (isObject(obj)) {
           buf = buf.concat(visitor(obj));
           buf = buf.filter(function(it) {
             return isObject(it) || isString(it);
           }).map(function(it) {
             if (isObject(it)) {
-              return it.render(options);
+              if (it.mixin) {
+                if (isArray(it.body)) {
+                  return it.body.join(separator);
+                } else {
+                  return it.body;
+                }
+              } else {
+                return it.render(options);
+              }
             } else {
               return it;
             }
           });
-          buf = buf.join(options.pretty === true ? "\n" : "");
+          buf = buf.join(separator);
         } else {
           buf = obj;
           if (isString(obj)) {
@@ -144,7 +153,7 @@
         return buf;
       };
       visitor = function(node) {
-        var buf, name, child, temp, attrs, i$, len$, item, own$ = {}.hasOwnProperty;
+        var buf, name, child, own$ = {}.hasOwnProperty;
         buf = [];
         for (name in node) if (own$.call(node, name)) {
           child = node[name];
@@ -152,24 +161,10 @@
             name = normalize(name);
             if (name === "include" && isString(child)) {
               buf.push(oml.render(readFile(child)));
+            } else if (isMixin(name)) {
+              buf.push(processMixin(name, child));
             } else if (isArray(child)) {
-              temp = [];
-              if (has(child, "$$attributes")) {
-                attrs = child.$$attributes;
-                child = child.$$body;
-              }
-              if (isArrayStrings(child)) {
-                buf.push(ht.apply(null, [ name, attrs, child.join(" ") ]));
-              } else {
-                for (i$ = 0, len$ = child.length; i$ < len$; ++i$) {
-                  item = child[i$];
-                  if (isObject(item)) {
-                    item = visitor(item);
-                  }
-                  temp.push(ht(name, item));
-                }
-                buf = buf.concat(temp);
-              }
+              buf = buf.concat(processArray(name, child));
             } else {
               buf.push(process(name, child));
             }
@@ -189,6 +184,41 @@
         }
         return ht(name, attrs, node);
       };
+      processMixin = function(name, node) {
+        var args, body;
+        name = getMixinName(name);
+        if (!name) {
+          throw new SyntaxError("Missing mixin name identifier");
+        }
+        args = getMixinArgs(node);
+        body = getMixinBody(node);
+        return {
+          mixin: name,
+          args: args,
+          body: visitor(body)
+        };
+      };
+      processArray = function(name, node) {
+        var buf, i$, len$, item;
+        buf = [];
+        if (isArrayStrings(node)) {
+          buf.push(ht.apply(null, [ name, node.join(" ") ]));
+        } else {
+          for (i$ = 0, len$ = node.length; i$ < len$; ++i$) {
+            item = node[i$];
+            if (isObject(item)) {
+              if (item.$$name && item.$$attributes && isUndef(item.$$body)) {
+                buf.push(process(item.$$name, item));
+              } else {
+                buf.push(ht(name, visitor(item)));
+              }
+            } else {
+              buf.push(ht(name, item));
+            }
+          }
+        }
+        return buf;
+      };
       readFile = function(it) {
         it = fileExt(it);
         if (it.charAt(0) !== "/") {
@@ -203,11 +233,42 @@
           return it;
         }
       };
+      getMixinName = function(it) {
+        var name;
+        if (name = it.match(/^mixin ([a-z0-9\_\-\.]+)(\s+)?\(?/i)) {
+          return name[1];
+        }
+      };
+      getMixinBody = function(it) {
+        if (it && it.$$attributes) {
+          return it.$$body;
+        } else {
+          return it;
+        }
+      };
+      getMixinArgs = function(it) {
+        var args;
+        args = null;
+        if (isObject(it)) {
+          if (isObject(it.$$attributes)) {
+            args = Object.keys(it.$$attributes);
+          } else if (isArray(it.$$attributes)) {
+            args = [];
+            it.$$attributes.map(function(it) {
+              return args.push(Object.keys(it));
+            });
+          }
+        }
+        return args;
+      };
       normalize = function(it) {
         return it.replace("@", "#");
       };
       isDoctype = function(it) {
         return /^doctype/i.test(it);
+      };
+      isMixin = function(it) {
+        return /^mixin/i.test(it);
       };
     }, {
       "./helpers": 1,
@@ -869,7 +930,6 @@
         return error;
       }
       function getErrorLines(src, e) {
-        var line;
         var buf = [];
         var current = e.line - 5;
         var end = e.line + 4;
@@ -881,13 +941,13 @@
           current += 1;
         } while (current < 0);
         while (current++ < end) {
-          buf.push(renderLine(line, src, current, end, e));
+          buf.push(renderLine(src, current, end, e));
         }
         return buf;
       }
-      function renderLine(line, src, current, end, e) {
-        var lineNumber = current + 1;
-        line = src[current];
+      function renderLine(src, current, end, e) {
+        var lineNumber = current;
+        var line = src[current - 1];
         if (e.line === lineNumber) {
           line = red(lineNumber + lineIndent(lineNumber, end) + "| ") + line.substr(0, e.column - 1) + bold(red(line.charAt(e.column - 1))) + line.substr(e.column);
         } else {
@@ -1024,7 +1084,11 @@
             var buf = [];
             if (_.isArray(body[k])) {
               body[k].forEach(function(node) {
-                if (node.$$attributes && node.$$attributes.length) {
+                if (node.$$attributes) {
+                  if (node.$$body === undefined) {
+                    node = _.clean(node);
+                    node.$$unassigned = true;
+                  }
                   buf.push(node);
                 } else {
                   buf.push(node.$$body);
@@ -1065,6 +1129,11 @@
           var expr = obj.$$expression;
           var attrs = obj.$$attributes;
           var name = obj.$$name;
+          if (obj.$$unassigned && attrs) {
+            obj.$$attributes = blockAttributes(attrs);
+            obj = _.omit(obj, "$$unassigned");
+            return obj;
+          }
           var setResult = blockResult(result, name);
           var body = blockBody(obj);
           result[name] = {};
@@ -1132,10 +1201,9 @@
           var matches, count = 0;
           while (matches = matchReferences(str)) {
             str = replaceReferences(str, matches);
-            if (count > 1e3) {
+            if (count++ > 1e3) {
               throw new e.CompileError("Circular reference detected");
             }
-            count += 1;
           }
           return str;
           function matchReferences(str) {
@@ -1261,7 +1329,7 @@
         return uniqueReferencePattern.test(str);
       }
       function hasMetaData(obj) {
-        return _.has(obj, "$$body") || _.has(obj, "$$name");
+        return _.has(obj, "$$attributes") || _.has(obj, "$$name");
       }
       function removeReferencesChars(str) {
         return str.replace(/^\@{3}/g, "").replace(/\@{3}$/g, "");
@@ -1617,7 +1685,7 @@
         }
       }
       function hasMetaData(obj) {
-        return _.has(obj, "$$body") || _.has(obj, "$$name");
+        return _.has(obj, "$$attributes") || _.has(obj, "$$name");
       }
     }, {
       "./helpers": 16

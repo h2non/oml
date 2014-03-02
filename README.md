@@ -233,20 +233,22 @@ script(type: text/javascript):>
 end
 ```
 
-### Mixins
-
-```ruby
-mixin title(name):
-  h1: @name
-  p: This is a paragraph
-end
-+title('name')!
-```
-
 ### Includes
 
 ```ruby
 include: path/to/file.oli
+```
+
+### Mixins
+
+**Upcoming feature**
+
+```ruby
+mixin sample(title, text):
+  h1: Hello $name
+  p: $text
+end
++title('oml', 'This is a paragraph')
 ```
 
 ### Comments
