@@ -27,14 +27,16 @@ exports.is-object = is-object = -> (it |> to-string.call) is '[object Object]'
 
 exports.is-array = is-array = -> (it |> to-string.call) is '[object Array]'
 
-exports.has = has = (obj, prop) ->
+exports.has = (obj, prop) ->
   if not (obj |> is-undef)
     obj |> has-own.call _, prop
   else
     false
 
-exports.is-array-strings = is-array-strings = ->
+exports.is-array-strings = ->
   for item in it
     if not (item |> is-string)
       return no
   yes
+
+exports.echo = -> console.log.apply console, & if console

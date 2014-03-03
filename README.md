@@ -8,7 +8,7 @@
 ## About
 
 **oml** (oli markup language) is a tiny and minimalist template engine 
-built on top of the [Oli][oli] language for node and the browser
+built on top of the [Oli][oli] language whoch runs in node and the browser
 
 It's powered by [oli.js][oli-js] and [htgen][htgen]
 
@@ -18,10 +18,16 @@ It's powered by [oli.js][oli-js] and [htgen][htgen]
 - Tag definition shortcuts and attributes autocompletion
 - Built-in support for data references
 - Generates pretty well-indended code
-- Support mixins and includes
-- Run over node and browsers
-- No third party dependencies
-- Based in the awesome Oli language
+- Support for mixins and file includes
+- Runs over node and browsers
+- Self-contained, no third party dependencies (for browser usage)
+- Based in the Oli language and use all of his features :)
+
+### Upcoming features
+
+- Include support in the browser
+- HTML entities decoding
+- Blocks support (like in Jade)
 
 ## Installation
 
@@ -80,6 +86,18 @@ try {
 Parse, compile and render the given. 
 It can **throw an exception** if a parsing or compilation error success
 
+#### Compiler(data, options)
+
+Expose the compiler constructor object
+
+#### oli
+
+Expose the [oli.js][oli-js-api] API
+
+#### htgen
+
+Expose the [htgen][htgen-api] API
+
 #### options
 
 Rendering supported options:
@@ -89,6 +107,15 @@ Rendering supported options:
 - **size**: Initial indent size. Default to `0`
 - **indent**: Indent spaces. Default to `2`
 - **tabs**: Use tabs instead of spaces to indent. Default to `false`
+
+## Syntax Reference
+
+This reference only points to the specific syntax use cases related to oml
+
+Please, take into account that oml syntax is completely based on the Oli language,
+so you can use any feature that is natively supported by Oli, like data references or block inheritance
+
+For more information about the oli syntax, you could visit the [language site][oli] or read the [specification][oli-docs]
 
 ### Featured example
 
@@ -123,15 +150,6 @@ html:
   end
 end
 ```
-
-## Syntax Reference
-
-This reference only points to the specific syntax use cases related to oml
-
-Please, take into account that oml syntax is completely based on the [oli language][oli],
-so you can use any feature that is natively supported by oli, like data references or block inheritance
-
-For more information about the oli syntax, you could read the [specification][oli-docs]
 
 ### Doctype
 
@@ -205,12 +223,13 @@ a (class: 'link', href: 'oli-lang.org'): Oli
 ### Blocks
 
 ```ruby
-div:- 
-  p: This is a plain text
+div:-
+  This will be parsed 
+  as a raw text
 end
 ```
 
-You also can interpolate html tags
+You also can interpolated html tags
 ```ruby
 div:
   p:- This is a plain <strong>text</strong>
@@ -322,7 +341,9 @@ Copyright (c) Tomas Aparicio
 
 Released under the MIT license
 
-[oli]:      https://oli-lang.org
-[oli-docs]: http://docs.oli-lang.org
-[oli-js]:   https://github.com/oli-lang/oli-js
-[htgen]:    https://github.com/h2non/htgen
+[oli]:        https://oli-lang.org
+[oli-docs]:   http://docs.oli-lang.org
+[oli-js]:     https://github.com/oli-lang/oli-js
+[htgen]:      https://github.com/h2non/htgen
+[oli-js-api]: https://github.com/oli-lang/oli-js#programmatic-api
+[htgen-api]:  https://github.com/oli-lang/oli-js#programmatic-api

@@ -16,6 +16,9 @@
   "directories": {
     "lib": "./lib"
   },
+  "bin": {
+    "oml": "./bin/oml"
+  },
   "engines": {
     "node": ">= 0.8.0"
   },
@@ -29,7 +32,9 @@
     "xml",
     "jade",
     "haml",
-    "markup"
+    "markup",
+    "oli",
+    "engine"
   ],
   "dependencies": {
     "htgen": "~0.1.4",

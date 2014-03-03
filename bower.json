@@ -21,7 +21,9 @@
     "xml",
     "jade",
     "haml",
-    "markup"
+    "markup",
+    "oli",
+    "engine"
   ],
   "ignore": [
     "**/.*",
