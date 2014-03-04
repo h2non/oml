@@ -281,7 +281,7 @@ describe 'Render', ->
           p: Hello
         end
         '''
-        expect render code .to.be.equal '<p>Hello</p>'
+        expect render code .to.be.equal ''
 
       # full support in progress
       it 'should define a mixin with arguments', ->
@@ -293,13 +293,14 @@ describe 'Render', ->
         '''
         expect render code .to.be.equal '<h1>$title</h1><p>$text</p>'
 
-      xit 'should call a mixin', ->
+      it 'should call a mixin', ->
         code = '''
         mixin test:
           p: Hello
         end
         +test
         '''
+        #console.log render code
         expect render code .to.be.equal '<p>Hello</p>'
 
 

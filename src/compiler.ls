@@ -7,6 +7,11 @@ require! {
 
 exports = module.exports = class Compiler
 
+  render = ->
+    (it
+      |> oli.parse _, @options
+      |> new Compiler _, @options).compile!
+
   options:
     base-path: cwd!
     pretty: no
@@ -22,17 +27,14 @@ exports = module.exports = class Compiler
   set-options: (options) ->
     @options = options |> extend (@options |> clone), _ if options
 
-  render: ->
-    (it
-      |> oli.parse _, @options
-      |> new Compiler _, @options).compile!
-
-  compile: ->
-    if @data |> is-object
-      @result = @compile-object!
-    else 
-      @result = @compile-default!
-    @result
+  compile: (data = @data) ->
+    if data |> is-object
+      result = data |> @compile-object
+    else if data |> is-array
+      result = data |> @compile-array
+    else
+      result = data |> @compile-raw
+    result
 
   compile-object: ->
 
@@ -51,35 +53,50 @@ exports = module.exports = class Compiler
       else
         it
 
-    @buf = (@data |> @visitor |> @buf.concat)
+    @buf = (it |> @visitor |> @process-mixins |> @buf.concat)
       .filter is-valid
       .map process-nodes
 
     @separator! |> @buf.join
 
-  compile-default: ->
-    if @data |> is-string
-      if @data |> is-doctype
-        (@data |> ht).render @options
+  compile-array: (data) ->
+    do iterate = ~>
+      for item, index in data when item then 
+        if item |> is-array
+          data[index] = item |> iterate
+        else
+          data[index] = item |> @compile
+    data
+
+  compile-raw: ->
+    if it |> is-string
+      if it |> is-doctype
+        (it |> ht).render @options
       else
-        @data
+        it
     else
-      @data
+      it
 
   visitor: (node) ->
     buf = []
     for own name, child of node when child isnt undefined then
       name = name |> normalize
       if name is 'include' and (child |> is-string)
-        child |> @read-file |> @render |> buf.push
-      # support in progress!
+        child |> @read-file |> render |> buf.push
       else if name |> is-mixin
-        child |> @process-mixin name, _ |> buf.push
+        child |> @register-mixin name, _
       else if child |> is-array
         buf = child |> @process-array name, _ |> buf.concat
       else
         child |> @process name, _ |> buf.push
     buf
+
+  process-mixins: ->
+    for child in it
+      when (child |> is-object) and (child.tag |> is-mixin-call)
+      then
+        console.log '>>>', child
+    it
 
   process: (name, node) ->
     if node is null
@@ -91,13 +108,12 @@ exports = module.exports = class Compiler
       node = node |> @visitor
     ht name, attrs, node
 
-  process-mixin: (name, node) ->
+  register-mixin: (name, node) ->
     name = name |> get-mixin-name
     throw new SyntaxError 'Missing mixin name identifier' if not name
-    { 
-      mixin: name
+    @mixins <<< (name): {
       args: node |> get-mixin-args
-      body: (node |> get-mixin-body |> @visitor) 
+      body: (node |> get-mixin-body |> @visitor)
     }
 
   process-array: (name, node) ->
@@ -154,3 +170,5 @@ normalize = -> it.replace '@', '#'
 is-doctype = -> /^doctype/i.test it
 
 is-mixin = -> /^mixin/i.test it
+
+is-mixin-call = -> /^\+/i.test it
