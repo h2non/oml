@@ -27,7 +27,7 @@ It's powered by [oli.js][oli-js] and [htgen][htgen]
 
 - Include support in the browser
 - HTML entities decoding
-- Blocks support (like in Jade)
+- Include blocks support (Jade-like)
 
 ## Installation
 
