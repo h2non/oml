@@ -20,10 +20,10 @@ describe 'Render', ->
       expect render false .to.be.false
 
     it 'should render "[1,2,3]" as list', ->
-      expect render "[1,2,3]" .to.be.deep.equal [1,2,3]
+      expect render "[1,2,3]" .to.be.deep.equal '123'
 
     it 'should render "- 1,2,3" as list', ->
-      expect render "- 1,2,3" .to.be.deep.equal [1,2,3]
+      expect render "- 1,2,3" .to.be.deep.equal '123'
 
   describe 'self-closed', (_) ->
 
@@ -283,24 +283,27 @@ describe 'Render', ->
         '''
         expect render code .to.be.equal ''
 
-      # full support in progress
-      it 'should define a mixin with arguments', ->
-        code = '''
-        mixin test(title, text):
-          h1: $title
-          p: $text
-        end
-        '''
-        expect render code .to.be.equal '<h1>$title</h1><p>$text</p>'
+      it 'should throw an exception if a mixin do not exists', ->
+        code = '+nonexists()'
+        expect -> render code .to.throw.an Error
 
-      it 'should call a mixin', ->
+      # full support in progress
+      it 'should call a mixin without arguments', ->
         code = '''
         mixin test:
           p: Hello
         end
         +test
         '''
-        #console.log render code
         expect render code .to.be.equal '<p>Hello</p>'
 
+      it 'should define a mixin with arguments', ->
+        code = '''
+        mixin test(title, text):
+          h1: $title
+          p: $text
+        end
+        +test ('Hello Oml!', 'This is a mixin')
+        '''
+        expect render code .to.be.equal '<h1>Hello Oml!</h1><p>This is a mixin</p>'
 

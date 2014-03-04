@@ -3,25 +3,25 @@
 [![Dependency Status](https://gemnasium.com/h2non/oml.png)](https://gemnasium.com/h2non/oml)
 [![NPM version](https://badge.fury.io/js/omljs.png)](http://badge.fury.io/js/omljs)
 
-> **Work in progress!** This is still an experimental just for fun project
+> **Disclaimer**: this is still an experimental just for fun project
 
 ## About
 
 **oml** (oli markup language) is a tiny and minimalist template engine 
-built on top of the [Oli][oli] language whoch runs in node and the browser
+built on top of the [Oli][oli] language which runs in node and the browser
 
 It's powered by [oli.js][oli-js] and [htgen][htgen]
 
 ## Features
 
 - Elegant and minimalist syntax
+- Support for mixins and file includes
 - Tag definition shortcuts and attributes autocompletion
 - Built-in support for data references
 - Generates pretty well-indended code
-- Support for mixins and file includes
 - Runs over node and browsers
-- Self-contained, no third party dependencies (for browser usage)
-- Based in the Oli language and use all of his features :)
+- Self-contained, no third party dependencies (in browser environments)
+- Based in the Oli language and you could use all of the language features :)
 
 ### Upcoming features
 
@@ -86,9 +86,9 @@ try {
 Parse, compile and render the given. 
 It can **throw an exception** if a parsing or compilation error success
 
-#### Compiler(data, options)
+#### Engine(data, options)
 
-Expose the compiler constructor object
+Expose the template engine constructor
 
 #### oli
 
@@ -103,6 +103,7 @@ Expose the [htgen][htgen-api] API
 Rendering supported options:
 
 - **locals**: Pass an local context to the compiler. Default to `null`
+- **basePath**: Base path to use for includes. Default to the current working directory
 - **pretty**: Generate a well-indented code. Default to `false`
 - **size**: Initial indent size. Default to `0`
 - **indent**: Indent spaces. Default to `2`

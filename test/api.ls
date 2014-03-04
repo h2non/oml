@@ -11,8 +11,8 @@ describe 'API', (_) ->
   it 'should expose the render method', ->
     expect oml.render .to.be.a 'function'
 
-  it 'should expose the Compiler class', ->
-    expect oml.Compiler .to.be.a 'function'
+  it 'should expose the Engine constructor', ->
+    expect oml.Engine .to.be.a 'function'
 
   it 'should expose the oli object', ->
     expect oml.oli .to.be.an 'object'

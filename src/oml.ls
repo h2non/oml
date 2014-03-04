@@ -1,18 +1,12 @@
 require! {
   oli
   htgen
-  Compiler: './compiler'
+  Engine: './engine'
 }
 
-oml = exports = module.exports = {}
-
-oml <<< {
-  Compiler
-  htgen
+exports = module.exports <<< {
   oli
+  htgen
+  Engine
+  Engine.render
 }
-
-oml.render = (code, options) ->
-  (String code |> oli.parse _, options
-    |> new Compiler _, options)
-    .compile!
