@@ -60,18 +60,6 @@ exports = module.exports = class Engine
     else
       it
 
-  process-node: ->
-    if it |> is-object
-      if it.mixin
-        if it.body |> is-array
-          @separator! |> it.body.join
-        else
-          it.body
-      else
-        @options |> it.render
-    else
-      it
-
   visitor: (node) ->
     buf = []
     for own name, child of node when child isnt undefined then
@@ -100,22 +88,6 @@ exports = module.exports = class Engine
       it |> buf.push
     @separator! |> buf.join 
 
-  process-mixins: ->
-    return it if not (it |> is-array)
-    for child, index in it 
-      when name = child |> is-mixin-node 
-      then
-        if not (mixin = @mixins[name])
-          throw new Error "Missing required mixin: #{name}"
-
-        body = mixin.body
-        call-args = child.attributes |> Object.keys if child.attributes
-        if mixin.args
-          for arg, aindex in mixin.args then 
-            body = body.replace "$#{arg}", (call-args[aindex] or '')
-        it[index] = body
-    it
-
   process: (name, node) ->
     if node is null
       name = "!#{name}"
@@ -126,13 +98,17 @@ exports = module.exports = class Engine
       node = node |> @visitor
     ht name, attrs, node
 
-  register-mixin: (name, node) ->
-    name = name |> get-mixin-name
-    throw new SyntaxError 'Missing mixin name identifier' if not name
-    @mixins <<< (name): {
-      args: node |> get-mixin-args
-      body: node.$$body
-    }
+  process-node: ->
+    if it |> is-object
+      if it.mixin
+        if it.body |> is-array
+          @separator! |> it.body.join
+        else
+          it.body
+      else
+        @options |> it.render
+    else
+      it
 
   process-array: (name, node) ->
     buf = []
@@ -149,6 +125,28 @@ exports = module.exports = class Engine
           item |> ht name, _ |> buf.push
     buf
 
+  process-mixins: ->
+    return it if not (it |> is-array)
+    for child, index in it 
+      when name = child |> is-mixin-node 
+      then
+        throw new Error "Missing required mixin: #{name}" if not (mixin = @mixins[name])
+        { body, args } = mixin
+        call-args = child.attributes |> Object.keys if child.attributes
+        if args
+          for arg, aindex in args 
+          then body = body.replace "$#{arg}", (call-args[aindex] or '')
+        it[index] = body
+    it
+
+  register-mixin: (name, node) ->
+    name = name |> get-mixin-name
+    throw new SyntaxError 'Missing mixin name identifier' if not name
+    @mixins <<< (name): {
+      args: node |> get-mixin-args
+      body: node.$$body
+    }
+
   separator: ->
     if @options.pretty then '\n' else ''
 
@@ -157,6 +155,9 @@ exports = module.exports = class Engine
     it = "#{@options.base-path}/#{it}" if it.charAt(0) isnt '/'
     (it |> fs.read-file-sync).to-string!
 
+#
+# helpers
+#
 
 file-ext = ->
   if not (/\.([a-z\-\_0-9]){0,10}$/i.test it)
