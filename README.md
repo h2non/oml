@@ -65,8 +65,8 @@ to see the all the supported syntax features
 ### Upcoming features
 
 - Include/require support in the browser
-- HTML entities decoding
 - Layout blocks (Jade-like)
+- HTML entities decoding
 
 ## Installation
 
