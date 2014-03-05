@@ -29,7 +29,8 @@ program.on '--help', ->
   echo '    $ oml file.oli -o file.html'
   echo '    $ oml -i "div: p: Hello"'
   echo '    $ oml -s < file.oli'
-  echo '    $ oml --indent --pretty 4 file.oli'
+  echo '    $ oml --indent 4 file.oli'
+  echo '    $ oml --tabs file.oli'
   echo!
 
 program

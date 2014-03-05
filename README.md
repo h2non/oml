@@ -3,7 +3,7 @@
 [![Dependency Status](https://gemnasium.com/h2non/oml.png)](https://gemnasium.com/h2non/oml)
 [![NPM version](https://badge.fury.io/js/omljs.png)](http://badge.fury.io/js/omljs)
 
-> **Disclaimer**: this is still an experimental just for fun project
+> **Disclaimer**: this is still a beta just for fun project
 
 ## About
 
