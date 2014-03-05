@@ -48,16 +48,19 @@ html:
 end
 ```
 
+Take a look to the [syntax reference](https://github.com/h2non/oml#syntax-reference) 
+to see the all the supported syntax features
+
 ## Features
 
-- Elegant and minimalist syntax
-- Support for mixins and file includes
+- Elegant, simple and minimalist syntax
+- Built-in support for mixins and file includes
 - Tag definition shortcuts and attributes autocompletion
 - Built-in support for data references
 - Generates pretty well-indended code
 - Runs over node and browsers
 - Self-contained, no third party dependencies (in browser environments)
-- Based in the Oli language and you could use all of the language features :)
+- Based in the Oli language (so you can use all of the native language features)
 
 ### Upcoming features
 
