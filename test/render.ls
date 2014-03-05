@@ -1,4 +1,5 @@
 require! {
+  fs
   '../lib/oml'.render
   'chai'.expect
 }
@@ -405,3 +406,29 @@ describe 'Render', ->
           '''
           expect render code .to.be.equal '<div><h1>Hello Oml!</h1></div>'
 
+  describe 'E2E', (_) ->
+    result = null
+
+    before -> 
+      result := render (fs.read-file-sync 'test/fixtures/index.oli'), base-path: "#{__dirname}/fixtures" 
+
+    it 'should have the proper doctype', ->
+      expect result .to.match /<!DOCTYPE html>/
+    
+    it 'should have the body tag', ->
+      expect result .to.match /<body>/
+
+    it 'should have the head tag', ->
+      expect result .to.match /<head>/
+
+    it 'should have the expected title', ->
+      expect result .to.match /<title>This is oml!/
+
+    it 'should include the head file property with scripts tags', ->
+      expect result .to.match /<script src=\"\/src.js\"><\/script>/
+
+    it 'should have the script tag', ->
+      expect result .to.match /<script>/
+    
+    it 'should have code in the script tag', ->
+      expect result .to.match /if \(foo\) \{\n  bar\(2 \^ 2\)/
