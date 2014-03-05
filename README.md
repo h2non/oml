@@ -125,7 +125,8 @@ To disable the automatic parsing, just add `data-ignore` attribute in the script
     $ oml file.oli -o file.html
     $ oml -i "div: p: Hello"
     $ oml -s < file.oli
-    $ oml --indent --pretty 4 file.oli
+    $ oml --indent 4 file.oli
+    $ oml --tabs file.oli
 
 ```
 
