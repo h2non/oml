@@ -3,7 +3,7 @@
 [![Dependency Status](https://gemnasium.com/h2non/oml.png)](https://gemnasium.com/h2non/oml)
 [![NPM version](https://badge.fury.io/js/omljs.png)](http://badge.fury.io/js/omljs)
 
-> **Note**: oml is still a beta just for fun project
+> Note that oml is still a just-for-fun beta project
 
 ## About
 
