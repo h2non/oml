@@ -14,7 +14,7 @@ It's powered by [oli.js][oli-js] and [htgen][htgen]
 
 You can try it online [here](http://jsfiddle.net/7LvYd/3)
 
-### Featured Example
+### Overview Example
 
 ```ruby
 url = 'https://github.com/h2non/oml#syntax-reference'
@@ -102,6 +102,32 @@ To disable the automatic parsing, just add `data-ignore` attribute in the script
 - Safari 5
 - Opera >= 11.6
 - IE >= 9
+
+## CLI
+
+```
+  Usage: oml [options] <path/to/file.oli>
+
+  Options:
+
+    -h, --help           output usage information
+    -V, --version        output the version number
+    -o, --output <file>  write output into a file instead of stdout
+    -i, --in-line        parse in-line argument as string
+    -p, --pretty         generate well-indented pretty output
+    -d, --indent <size>  JSON output indent size. Default to 2
+    -t, --tabs           use tabs instead of spaces to indent
+    -s, --stdin          read source from stdin
+
+  Usage examples:
+
+    $ oml file.oli > file.html
+    $ oml file.oli -o file.html
+    $ oml -i "div: p: Hello"
+    $ oml -s < file.oli
+    $ oml --indent --pretty 4 file.oli
+
+```
 
 ## API
 

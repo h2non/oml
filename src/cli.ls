@@ -18,7 +18,7 @@ program
   .option '-o, --output <file>', 'write output into a file instead of stdout'
   .option '-i, --in-line', 'parse in-line argument as string'
   .option '-p, --pretty', 'generate well-indented pretty output'
-  .option '-d, --indent <size>', 'JSON output indent size. Default to 2'
+  .option '-d, --indent <size>', 'Output indent size. Default to 2 spaces'
   .option '-t, --tabs', 'use tabs instead of spaces to indent'
   .option '-s, --stdin', 'read source from stdin'
 
