@@ -89,11 +89,6 @@ exports = module.exports = class Engine
     @separator! |> buf.join 
 
   process: (name, node) ->
-    /*
-    else if name |> is-mixin-call
-      attrs = node.$$attributes
-      node = node.$$body
-    */
     if node is null
       name = "!#{name}"
     else if node |> has _, '$$attributes'
@@ -199,9 +194,6 @@ get-mixin-args = ->
       else
         (it): attrs[it]
   args
-
-map-arguments = ->
-  
 
 is-valid = -> (it |> is-object) or ((it |> is-string) and it.length)  
 
