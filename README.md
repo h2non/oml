@@ -49,7 +49,7 @@ end
 ```
 
 Take a look to the [syntax reference](https://github.com/h2non/oml#syntax-reference) 
-to see the all the supported syntax features
+for more defaults and supported features
 
 ## Features
 
