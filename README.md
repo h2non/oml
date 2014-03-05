@@ -48,7 +48,7 @@ end
 ```
 
 Take a look to the [syntax reference](https://github.com/h2non/oml#syntax-reference) 
-for more defaults and supported features
+for more details and supported features
 
 ## Features
 
