@@ -12,6 +12,40 @@ built on top of the [Oli][oli] language which runs in node and the browser
 
 It's powered by [oli.js][oli-js] and [htgen][htgen]
 
+### Featured Examples
+
+```ruby
+url = 'https://github.com/h2non/oml#syntax-reference'
+
+doctype
+html:
+  head:
+    include: includes/head
+    &title: This is oml!
+    script:>
+      if (foo) {
+        bar(2 ^ 2)
+      }
+    end
+  end
+  body:
+    # use a reference that points to 'title'
+    h1.head: *title 
+    # use the shortcuts for class and id attributes definition
+    .container@main (title: 'Main container'):
+      p.text:
+        | A template engine built on top of the Oli language
+      a (href: *url): Oml reference
+      textarea:-
+        Lorem ipsum ad his scripta blandit partiendo, 
+        eum fastidii accumsan euripidis in, eum liber 
+        hendrerit an. Qui ut wisi vocibus suscipiantur
+      end
+    end
+  end
+end
+```
+
 ## Features
 
 - Elegant and minimalist syntax
@@ -117,40 +151,6 @@ Please, take into account that oml syntax is completely based on the Oli languag
 so you can use any feature that is natively supported by Oli, like data references or block inheritance
 
 For more information about the oli syntax, you could visit the [language site][oli] or read the [specification][oli-docs]
-
-### Featured example
-
-```ruby
-url = 'https://github.com/h2non/oml#syntax-reference'
-
-doctype
-html:
-  head:
-    include: includes/head
-    &title: This is oml!
-    script:>
-      if (foo) {
-        bar(2 ^ 2)
-      }
-    end
-  end
-  body:
-    # use a reference that points to 'title'
-    h1.head: *title 
-    # use the shortcuts for class and id attributes definition
-    .container@main (title: 'Main container'):
-      p.text:
-        | A template engine built on top of the Oli language
-      a (href: *url): Oml reference
-      textarea:-
-        Lorem ipsum ad his scripta blandit partiendo, 
-        eum fastidii accumsan euripidis in, eum liber 
-        hendrerit an. Qui ut wisi vocibus suscipiantur
-      end
-    end
-  end
-end
-```
 
 ### Doctype
 
