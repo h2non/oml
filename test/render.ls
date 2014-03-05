@@ -273,7 +273,40 @@ describe 'Render', ->
             '</script></head><body><h1>title</h1><p>Content</p></body></html>'
           )
 
-    describe 'mixin', (_) ->
+        it 'should throw an error if cannot include a file', ->
+          code = '''
+          html:
+            include: non-existent.oli
+          end
+          '''
+          expect (-> render code) .to.throw!
+
+    describe 'requires', (_) ->
+
+      it 'should load and render an included file', ->
+        code = 'require: test/fixtures/sample'
+        expect render code .to.be.equal '<h1 class="title">Hello oml</h1>'
+
+      it 'should load and render an included with extension', ->
+        code = 'require: test/fixtures/sample.oli'
+        expect render code .to.be.equal '<h1 class="title">Hello oml</h1>'
+
+      describe 'interpolation', (_) ->
+
+        it 'should require a interpolated content', ->
+          code = '''
+          div:
+            h1: title
+            require: test/fixtures/sample.oli
+            footer: credits
+          end
+          '''
+          expect render code .to.be.equal (
+            '<div><h1>title</h1><h1 class="title">' +
+            'Hello oml</h1><footer>credits</footer></div>'
+          )
+
+    describe 'mixins', (_) ->
 
       it 'should define a mixin', ->
         code = '''
@@ -287,7 +320,6 @@ describe 'Render', ->
         code = '+nonexists()'
         expect -> render code .to.throw.an Error
 
-      # full support in progress
       it 'should call a mixin without arguments', ->
         code = '''
         mixin test:
@@ -297,7 +329,7 @@ describe 'Render', ->
         '''
         expect render code .to.be.equal '<p>Hello</p>'
 
-      it 'should define a mixin with arguments', ->
+      it 'should use a mixin with string arguments', ->
         code = '''
         mixin test(title, text):
           h1: $title
@@ -306,4 +338,56 @@ describe 'Render', ->
         +test ('Hello Oml!', 'This is a mixin')
         '''
         expect render code .to.be.equal '<h1>Hello Oml!</h1><p>This is a mixin</p>'
+
+      it 'should use a mixin with undefined arguments', ->
+        code = '''
+        mixin test(title, text):
+          h1: $title
+          p: $text
+        end
+        +test ('Hello Oml!')
+        '''
+        expect render code .to.be.equal '<h1>Hello Oml!</h1><p></p>'
+
+      it 'should use a default argument value', ->
+        code = '''
+        mixin test(title, text: 'default'):
+          h1: $title
+          p: $text
+        end
+        +test ('Hello Oml!')
+        '''
+        expect render code .to.be.equal '<h1>Hello Oml!</h1><p>default</p>'
+
+      it 'should use a number as default argument', ->
+        code = '''
+        mixin test(title, number: 123):
+          h1: $title
+          p: Number $number
+        end
+        +test ('Hello Oml!')
+        '''
+        expect render code .to.be.equal '<h1>Hello Oml!</h1><p>Number 123</p>'
+
+      it 'should not replace a non-existent variable', ->
+        code = '''
+        mixin test:
+          p: $nonexistent
+        end
+        +test
+        '''
+        expect render code .to.be.equal '<p>$nonexistent</p>'
+
+      describe 'nested', (_) ->
+
+        it 'should render a nested mixin', ->
+          code = '''
+          mixin title(name):
+            h1: $name
+          end
+          div:
+            +title ('Hello Oml!')
+          end
+          '''
+          expect render code .to.be.equal '<div><h1>Hello Oml!</h1></div>'
 

@@ -64,15 +64,15 @@ exports = module.exports = class Engine
     buf = []
     for own name, child of node when child isnt undefined then
       name = name |> normalize
-      if name is 'include' and (child |> is-string)
+      if (name is 'include' or name is 'require') and (child |> is-string)
         child |> @read-file |> Engine.render _, @options |> buf.push
+      else if child |> is-array
+        buf = child |> @process-array name, _ |> buf.concat
       else if name |> is-mixin-definition
         if not (child |> has _, '$$attributes')
           child = $$attributes: null, $$body: child
-        child.$$body = child.$$body |> @visit-mixin 
+        child.$$body = child.$$body |> @visit-mixin
         child |> @register-mixin name, _
-      else if child |> is-array
-        buf = child |> @process-array name, _ |> buf.concat
       else
         child |> @process name, _ |> buf.push
     buf
@@ -89,6 +89,11 @@ exports = module.exports = class Engine
     @separator! |> buf.join 
 
   process: (name, node) ->
+    /*
+    else if name |> is-mixin-call
+      attrs = node.$$attributes
+      node = node.$$body
+    */
     if node is null
       name = "!#{name}"
     else if node |> has _, '$$attributes'
@@ -127,17 +132,28 @@ exports = module.exports = class Engine
 
   process-mixins: ->
     return it if not (it |> is-array)
-    for child, index in it 
-      when name = child |> is-mixin-node 
+    for child, index in it  
       then
-        throw new Error "Missing required mixin: #{name}" if not (mixin = @mixins[name])
-        { body, args } = mixin
-        call-args = child.attributes |> Object.keys if child.attributes
-        if args
-          for arg, aindex in args 
-          then body = body.replace "$#{arg}", (call-args[aindex] or '')
-        it[index] = body
+        if name = child |> is-mixin-node
+          throw new Error "Missing required mixin: #{name}" if not (mixin = @mixins[name])
+          call-args = child.attributes |> Object.keys if child.attributes
+          it[index] = mixin |> @mixin-arguments _, call-args
+        else if (child |> is-object) and (child.child-nodes)
+          it[index]['childNodes'] = (child.child-nodes |> @process-mixins)
     it
+
+  mixin-arguments: (mixin, call-args = []) ->
+    { body, args } = mixin
+    return body if not args
+    
+    def-value = ''
+    for arg, aindex in args then 
+      if arg |> is-object
+        [ key ] = arg |> Object.keys
+        def-value = arg[key] or def-value
+        arg = key
+      body = body.replace "$#{arg}", (call-args[aindex] or def-value)
+    body
 
   register-mixin: (name, node) ->
     name = name |> get-mixin-name
@@ -176,13 +192,16 @@ get-mixin-call = ->
 
 get-mixin-args = ->
   args = null
-  if it |> is-object
-    if it.$$attributes |> is-object
-      args = it.$$attributes |> Object.keys
-    else if it.$$attributes |> is-array
-      args = []
-      it.$$attributes.for-each -> (it |> Object.keys ) |> args.push
+  if (it |> is-object) and ((attrs =it.$$attributes) |> is-object)
+    args = (attrs |> Object.keys).map ->
+      if attrs[it] |> is-undef
+        it
+      else
+        (it): attrs[it]
   args
+
+map-arguments = ->
+  
 
 is-valid = -> (it |> is-object) or ((it |> is-string) and it.length)  
 

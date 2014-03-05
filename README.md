@@ -67,7 +67,7 @@ To disable the automatic parsing, just add `data-ignore` attribute in the script
 - Opera >= 11.6
 - IE >= 9
 
-### API
+## API
 
 #### Example
 
@@ -100,9 +100,9 @@ Expose the [htgen][htgen-api] API
 
 #### options
 
-Rendering supported options:
+Render supported options:
 
-- **locals**: Pass an local context to the compiler. Default to `null`
+- **locals**: Local context to pass to the compiler. Default to `null`
 - **basePath**: Base path to use for includes. Default to the current working directory
 - **pretty**: Generate a well-indented code. Default to `false`
 - **size**: Initial indent size. Default to `0`
@@ -223,14 +223,26 @@ a (class: 'link', href: 'oli-lang.org'): Oli
 
 ### Blocks
 
+Folded
 ```ruby
-div:-
-  This will be parsed 
-  as a raw text
+div:
+  p:-
+    This will be parsed 
+    as a raw text
+  end
+end
+```
+Unfolded
+```ruby
+div:
+  p:=
+    This will be parsed 
+    as a raw text
+  end
 end
 ```
 
-You also can interpolated html tags
+You also can use interpolated HTML tags
 ```ruby
 div:
   p:- This is a plain <strong>text</strong>
@@ -243,10 +255,9 @@ div:
   | p: This is a plain <strong>text</strong>
 ```
 
-#### Plain text
-
+Plain text
 ```ruby
-script(type: text/javascript):>
+script (type: text/javascript):>
   if (foo) {
      bar(1 + 5)
   }
@@ -259,16 +270,41 @@ end
 include: path/to/file.oli
 ```
 
+### Requires
+
+Load and append source in the current document. 
+The only significant difference with `include` is that `require` required 
+file is loaded in a isolated sandbox context
+```ruby
+require: path/to/file.oli
+```
+
 ### Mixins
 
-**Upcoming feature**
+Mixin declaration
+```ruby
+mixin title:
+  h1: Hello Oml
+end
++title
+```
 
+Passing arguments:
 ```ruby
 mixin sample(title, text):
   h1: Hello $name
   p: $text
 end
-+title('oml', 'This is a paragraph')
++sample ('oml', 'This is a paragraph')
+```
+
+Default arguments:
+```ruby
+mixin sample(title, text: 'default value'):
+  h1: Hello $name
+  p: $text
+end
++sample ('oml')
 ```
 
 ### Comments
@@ -294,8 +330,8 @@ You must add new test cases for any new feature or refactor you do,
 always following the same design/code patterns that already exist
 
 **oml** is completely written in LiveScript language.
-Take a look to the language [documentation][3] if you are new with it.
-You should follow the LiveScript language conventions defined in the [coding style guide][4]
+Take a look to the language [documentation][ls-docs] if you are new with it.
+You should follow the LiveScript language conventions defined in the [coding style guide][ls-style]
 
 ### Development
 
@@ -316,22 +352,17 @@ Run tests
 $ npm test
 ```
 
-Run benchmarks
-```
-grunt bench
-```
-
 Coding zen mode
 ```
-$ grunt dev [--force]
+$ grunt zen [--force]
 ```
 
-Browser sources bundle
+Bundle browser sources 
 ```
 $ grunt build
 ```
 
-Release a new version
+Release a new patch version
 ```
 $ grunt release
 ```
@@ -348,3 +379,5 @@ Released under the MIT license
 [htgen]:      https://github.com/h2non/htgen
 [oli-js-api]: https://github.com/oli-lang/oli-js#programmatic-api
 [htgen-api]:  https://github.com/oli-lang/oli-js#programmatic-api
+[ls-docs]:    http://livescript.net/
+[ls-style]:   https://github.com/gkz/LiveScript-style-guide
