@@ -1,4 +1,4 @@
-/*! oml.js - v0.1.0 - MIT License - https://github.com/h2non/oml | Generated 2014-03-05 10:25 */
+/*! oml.js - v0.1.0 - MIT License - https://github.com/h2non/oml | Generated 2014-03-06 12:28 */
 !function(e) {
   if ("object" == typeof exports) module.exports = e(); else if ("function" == typeof define && define.amd) define(e); else {
     var f;
@@ -31,9 +31,10 @@
     return s;
   }({
     1: [ function(_dereq_, module, exports) {
-      var fs, oli, ht, ref$, isObject, isArray, isString, isUndef, isArrayStrings, extend, clone, has, cwd, exports, Engine, fileExt, mixinNameRegex, mixinCallRegex, getMixinName, getMixinCall, getMixinArgs, isValid, normalize, isDoctype, isMixinNode, isMixinDefinition, isMixinCall;
+      var fs, oli, tags, ht, ref$, isObject, isArray, isString, isUndef, isArrayStrings, extend, clone, has, cwd, exports, Engine, mixinNameRegex, mixinCallRegex, fileExt, getMixinName, getMixinCall, getMixinArgs, isValid, isSelfClosed, normalize, isDoctype, isMixinNode, isMixinDefinition, isMixinCall;
       fs = _dereq_("fs");
       oli = _dereq_("oli");
+      tags = _dereq_("./tags");
       ht = _dereq_("htgen");
       ref$ = _dereq_("./helpers"), isObject = ref$.isObject, isArray = ref$.isArray, isString = ref$.isString, 
       isUndef = ref$.isUndef, isArrayStrings = ref$.isArrayStrings, extend = ref$.extend, 
@@ -104,6 +105,10 @@
           if (isString(it)) {
             if (isDoctype(it)) {
               return ht(it).render(this.options);
+            } else if (isSelfClosed(it)) {
+              return ht("!" + it).render(this.options);
+            } else if (it.charAt(0) === "!") {
+              return ht(it).render(this.options);
             } else {
               return it;
             }
@@ -163,11 +168,18 @@
           } else if (has(node, "$$attributes")) {
             attrs = node.$$attributes;
             node = node.$$body;
+            if (isArray(node)) {
+              node = node.map(function(it) {
+                return this.visitor(it);
+              });
+            } else if (isObject(node)) {
+              node = this.visitor(node);
+            }
           } else if (isObject(node)) {
             node = this.visitor(node);
           }
-          if (isArray(node)) {
-            console.log("IS ARRAY >", node);
+          if (isSelfClosed(name)) {
+            name = "!" + name;
           }
           return ht(name, attrs, node);
         };
@@ -276,6 +288,8 @@
         };
         return Engine;
       }();
+      mixinNameRegex = /^mixin ([a-z0-9\_\-\.]+)[\s+]?\(?/i;
+      mixinCallRegex = /^\+[\s+]?([a-z0-9\_\-\.]+)[\s+]?\(?/i;
       fileExt = function(it) {
         if (!/\.([a-z\-\_0-9]){0,10}$/i.test(it)) {
           return it += ".oli";
@@ -283,8 +297,6 @@
           return it;
         }
       };
-      mixinNameRegex = /^mixin ([a-z0-9\_\-\.]+)[\s+]?\(?/i;
-      mixinCallRegex = /^\+[\s+]?([a-z0-9\_\-\.]+)[\s+]?\(?/i;
       getMixinName = function(it) {
         var name;
         if (name = it.match(mixinNameRegex)) {
@@ -315,6 +327,9 @@
       isValid = function(it) {
         return isObject(it) || isString(it) && it.length;
       };
+      isSelfClosed = function(it) {
+        return tags.indexOf(it) !== -1;
+      };
       normalize = function(it) {
         return it.replace("@", "#");
       };
@@ -338,9 +353,10 @@
       };
     }, {
       "./helpers": 2,
-      fs: 4,
-      htgen: 9,
-      oli: 18
+      "./tags": 4,
+      fs: 5,
+      htgen: 10,
+      oli: 19
     } ],
     2: [ function(_dereq_, module, exports) {
       (function(process) {
@@ -414,7 +430,7 @@
         };
       }).call(this, _dereq_("/Users/h2non/projects/oml/node_modules/grunt-browserify/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js"));
     }, {
-      "/Users/h2non/projects/oml/node_modules/grunt-browserify/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js": 5
+      "/Users/h2non/projects/oml/node_modules/grunt-browserify/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js": 6
     } ],
     3: [ function(_dereq_, module, exports) {
       var oli, htgen, Engine, exports, ref$;
@@ -425,11 +441,15 @@
       ref$.render = Engine.render, ref$);
     }, {
       "./engine": 1,
-      htgen: 9,
-      oli: 18
+      htgen: 10,
+      oli: 19
     } ],
-    4: [ function(_dereq_, module, exports) {}, {} ],
-    5: [ function(_dereq_, module, exports) {
+    4: [ function(_dereq_, module, exports) {
+      var exports;
+      exports = module.exports = [ "area", "base", "br", "col", "command", "embed", "hr", "img", "input", "keygen", "link", "meta", "param", "source", "track", "wbr" ];
+    }, {} ],
+    5: [ function(_dereq_, module, exports) {}, {} ],
+    6: [ function(_dereq_, module, exports) {
       var process = module.exports = {};
       process.nextTick = function() {
         var canSetImmediate = typeof window !== "undefined" && window.setImmediate;
@@ -474,7 +494,7 @@
         throw new Error("process.chdir is not supported");
       };
     }, {} ],
-    6: [ function(_dereq_, module, exports) {
+    7: [ function(_dereq_, module, exports) {
       module.exports = {
         html: "<!DOCTYPE html>",
         xml: '<?xml version="1.0" encoding="utf-8" ?>',
@@ -486,7 +506,7 @@
         mobile: '<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.2//EN" "http://www.openmobilealliance.org/tech/DTD/xhtml-mobile12.dtd">'
       };
     }, {} ],
-    7: [ function(_dereq_, module, exports) {
+    8: [ function(_dereq_, module, exports) {
       var ref$, extend, clone, isString, isObject, isArray, doctypes, exports, Generator;
       ref$ = _dereq_("./helpers"), extend = ref$.extend, clone = ref$.clone, isString = ref$.isString, 
       isObject = ref$.isObject, isArray = ref$.isArray;
@@ -619,10 +639,10 @@
         return Generator;
       }();
     }, {
-      "./doctypes": 6,
-      "./helpers": 8
+      "./doctypes": 7,
+      "./helpers": 9
     } ],
-    8: [ function(_dereq_, module, exports) {
+    9: [ function(_dereq_, module, exports) {
       var toString, clone, isString, isObject, isArray;
       toString = Object.prototype.toString;
       exports.extend = function(target, origin) {
@@ -658,7 +678,7 @@
         return toString.call(it) === "[object Array]";
       };
     }, {} ],
-    9: [ function(_dereq_, module, exports) {
+    10: [ function(_dereq_, module, exports) {
       var Generator, Node, exports;
       Generator = _dereq_("./generator");
       Node = _dereq_("./node");
@@ -666,10 +686,10 @@
       exports.Node = Node;
       exports.Generator = Generator;
     }, {
-      "./generator": 7,
-      "./node": 10
+      "./generator": 8,
+      "./node": 11
     } ],
-    10: [ function(_dereq_, module, exports) {
+    11: [ function(_dereq_, module, exports) {
       var ref$, extend, isString, isObject, isArray, Generator, exports, Node, isNode, isSelfClosed, removeNot, parseTag, slice$ = [].slice;
       ref$ = _dereq_("./helpers"), extend = ref$.extend, isString = ref$.isString, isObject = ref$.isObject, 
       isArray = ref$.isArray;
@@ -842,10 +862,10 @@
         return result;
       };
     }, {
-      "./generator": 7,
-      "./helpers": 8
+      "./generator": 8,
+      "./helpers": 9
     } ],
-    11: [ function(_dereq_, module, exports) {
+    12: [ function(_dereq_, module, exports) {
       "use strict";
       var Memory = _dereq_("./memory");
       var transformer = _dereq_("./transformer");
@@ -899,13 +919,13 @@
         return result;
       };
     }, {
-      "./errors": 14,
-      "./generator": 15,
-      "./helpers": 16,
-      "./memory": 17,
-      "./transformer": 21
+      "./errors": 15,
+      "./generator": 16,
+      "./helpers": 17,
+      "./memory": 18,
+      "./transformer": 22
     } ],
-    12: [ function(_dereq_, module, exports) {
+    13: [ function(_dereq_, module, exports) {
       "use strict";
       var _ = _dereq_("../helpers");
       var mimeTypes = [ "text/oli", "text/oli-template", "application/oli" ];
@@ -984,9 +1004,9 @@
         }
       };
     }, {
-      "../helpers": 16
+      "../helpers": 17
     } ],
-    13: [ function(_dereq_, module, exports) {
+    14: [ function(_dereq_, module, exports) {
       "use strict";
       var fs = _dereq_("fs");
       exports = module.exports = function oliRequireHandler(oli) {
@@ -995,9 +1015,9 @@
         };
       };
     }, {
-      fs: 4
+      fs: 5
     } ],
-    14: [ function(_dereq_, module, exports) {
+    15: [ function(_dereq_, module, exports) {
       "use strict";
       var isBrowser = _dereq_("./helpers").isBrowser;
       exports = module.exports = {
@@ -1090,9 +1110,9 @@
         return isBrowser ? "<b>" + str + "</b>" : "[1m" + str + "[22m";
       }
     }, {
-      "./helpers": 16
+      "./helpers": 17
     } ],
-    15: [ function(_dereq_, module, exports) {
+    16: [ function(_dereq_, module, exports) {
       "use strict";
       var _ = _dereq_("./helpers");
       var e = _dereq_("./errors");
@@ -1450,11 +1470,11 @@
         return ref.indexOf(".") !== -1;
       }
     }, {
-      "./errors": 14,
-      "./helpers": 16,
-      "./tokens": 20
+      "./errors": 15,
+      "./helpers": 17,
+      "./tokens": 21
     } ],
-    16: [ function(_dereq_, module, exports) {
+    17: [ function(_dereq_, module, exports) {
       "use strict";
       var toString = Object.prototype.toString;
       var hasOwn = Object.prototype.hasOwnProperty;
@@ -1721,7 +1741,7 @@
         return toString.call(obj);
       }
     }, {} ],
-    17: [ function(_dereq_, module, exports) {
+    18: [ function(_dereq_, module, exports) {
       "use strict";
       var _ = _dereq_("./helpers");
       exports = module.exports = Memory;
@@ -1800,9 +1820,9 @@
         return _.has(obj, "$$attributes") || _.has(obj, "$$name");
       }
     }, {
-      "./helpers": 16
+      "./helpers": 17
     } ],
-    18: [ function(_dereq_, module, exports) {
+    19: [ function(_dereq_, module, exports) {
       "use strict";
       var _ = _dereq_("./helpers");
       var parser = _dereq_("./parser").parse;
@@ -1898,14 +1918,14 @@
         throw errors.handler(error, code);
       }
     }, {
-      "./compiler": 11,
-      "./engine/browser": 12,
-      "./engine/node": 13,
-      "./errors": 14,
-      "./helpers": 16,
-      "./parser": 19
+      "./compiler": 12,
+      "./engine/browser": 13,
+      "./engine/node": 14,
+      "./errors": 15,
+      "./helpers": 17,
+      "./parser": 20
     } ],
-    19: [ function(_dereq_, module, exports) {
+    20: [ function(_dereq_, module, exports) {
       module.exports = function() {
         function peg$subclass(child, parent) {
           function ctor() {
@@ -8189,7 +8209,7 @@
         };
       }();
     }, {} ],
-    20: [ function(_dereq_, module, exports) {
+    21: [ function(_dereq_, module, exports) {
       exports = module.exports = {
         ASSIGN: ":",
         EQUAL: "=",
@@ -8207,7 +8227,7 @@
         MERGE: ">>>"
       };
     }, {} ],
-    21: [ function(_dereq_, module, exports) {
+    22: [ function(_dereq_, module, exports) {
       "use strict";
       var _ = _dereq_("./helpers");
       var tokens = _dereq_("./tokens");
@@ -8488,9 +8508,9 @@
         return str.replace(/(\s+|\t+)$/, "");
       }
     }, {
-      "./errors": 14,
-      "./helpers": 16,
-      "./tokens": 20
+      "./errors": 15,
+      "./helpers": 17,
+      "./tokens": 21
     } ]
   }, {}, [ 3 ])(3);
 });
