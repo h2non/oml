@@ -1,4 +1,4 @@
-/*! oml.js - v0.1.0 - MIT License - https://github.com/h2non/oml | Generated 2014-03-05 01:18 */
+/*! oml.js - v0.1.0 - MIT License - https://github.com/h2non/oml | Generated 2014-03-05 01:19 */
 !function(e) {
   if ("object" == typeof exports) module.exports = e(); else if ("function" == typeof define && define.amd) define(e); else {
     var f;
@@ -31,7 +31,7 @@
     return s;
   }({
     1: [ function(_dereq_, module, exports) {
-      var fs, oli, ht, ref$, isObject, isArray, isString, isUndef, isArrayStrings, extend, clone, has, cwd, exports, Engine, fileExt, mixinNameRegex, mixinCallRegex, getMixinName, getMixinCall, getMixinArgs, mapArguments, isValid, normalize, isDoctype, isMixinNode, isMixinDefinition, isMixinCall;
+      var fs, oli, ht, ref$, isObject, isArray, isString, isUndef, isArrayStrings, extend, clone, has, cwd, exports, Engine, fileExt, mixinNameRegex, mixinCallRegex, getMixinName, getMixinCall, getMixinArgs, isValid, normalize, isDoctype, isMixinNode, isMixinDefinition, isMixinCall;
       fs = _dereq_("fs");
       oli = _dereq_("oli");
       ht = _dereq_("htgen");
@@ -309,7 +309,6 @@
         }
         return args;
       };
-      mapArguments = function() {};
       isValid = function(it) {
         return isObject(it) || isString(it) && it.length;
       };
