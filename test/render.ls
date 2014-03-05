@@ -150,6 +150,20 @@ describe 'Render', ->
           '</p></div></div>'
         )
 
+    describe 'html tags', (_) ->
+
+      it 'should render with html tags', ->
+        code = 'p: This is a plain <strong>text</strong>'
+        expect render code .to.be.equal '<p>This is a plain <strong>text</strong></p>'
+
+      it 'should render a block with html tags', ->
+        code = '''
+        div: 
+          | <p>This is a plain <strong>text</strong></p>
+        '''
+        expect render code .to.be.equal '<div><p>This is a plain <strong>text</strong></p></div>'
+
+
     describe 'block types', (_) ->
 
       describe 'fold', (_) ->

@@ -25,9 +25,9 @@ It's powered by [oli.js][oli-js] and [htgen][htgen]
 
 ### Upcoming features
 
-- Include support in the browser
+- Include/require support in the browser
 - HTML entities decoding
-- Include blocks support (Jade-like)
+- Layout blocks (Jade-like)
 
 ## Installation
 
@@ -84,7 +84,7 @@ try {
 #### render(code, options)
 
 Parse, compile and render the given. 
-It can **throw an exception** if a parsing or compilation error success
+It will **throw an exception** if a parsing, compilation or rendering error happens
 
 #### Engine(data, options)
 

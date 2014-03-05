@@ -1,4 +1,4 @@
-/*! oml.js - v0.1.0 - MIT License - https://github.com/h2non/oml | Generated 2014-03-02 01:44 */
+/*! oml.js - v0.1.0 - MIT License - https://github.com/h2non/oml | Generated 2014-03-05 01:18 */
 !function(e) {
   if ("object" == typeof exports) module.exports = e(); else if ("function" == typeof define && define.amd) define(e); else {
     var f;
@@ -31,8 +31,318 @@
     return s;
   }({
     1: [ function(_dereq_, module, exports) {
+      var fs, oli, ht, ref$, isObject, isArray, isString, isUndef, isArrayStrings, extend, clone, has, cwd, exports, Engine, fileExt, mixinNameRegex, mixinCallRegex, getMixinName, getMixinCall, getMixinArgs, mapArguments, isValid, normalize, isDoctype, isMixinNode, isMixinDefinition, isMixinCall;
+      fs = _dereq_("fs");
+      oli = _dereq_("oli");
+      ht = _dereq_("htgen");
+      ref$ = _dereq_("./helpers"), isObject = ref$.isObject, isArray = ref$.isArray, isString = ref$.isString, 
+      isUndef = ref$.isUndef, isArrayStrings = ref$.isArrayStrings, extend = ref$.extend, 
+      clone = ref$.clone, has = ref$.has, cwd = ref$.cwd;
+      exports = module.exports = Engine = function() {
+        Engine.displayName = "Engine";
+        var prototype = Engine.prototype, constructor = Engine;
+        Engine.render = function(code, options) {
+          return new Engine(oli.parse(String(code), options), options).compile();
+        };
+        Engine.options = {
+          basePath: cwd(),
+          pretty: false,
+          indent: 2
+        };
+        function Engine(data, options) {
+          this.data = data;
+          this.mixins = {};
+          this.buf = [];
+          this.result = null;
+          this.setOptions(options);
+        }
+        prototype.setOptions = function(it) {
+          return this.options = extend(clone(Engine.options), it);
+        };
+        prototype.compile = function(data) {
+          data == null && (data = this.data);
+          if (isObject(data)) {
+            return this.compileObject(data);
+          } else if (isArray(data)) {
+            return this.compileArray(data);
+          } else {
+            return this.compileRaw(data);
+          }
+        };
+        prototype.compileObject = function(it) {
+          var this$ = this;
+          this.buf = this.processMixins(this.visitor(it)).filter(isValid).map(function(it) {
+            return this$.processNode(it);
+          });
+          return this.buf.join(this.separator());
+        };
+        prototype.compileArray = function(data) {
+          var buf, iterate, this$ = this;
+          buf = [];
+          (iterate = function() {
+            var i$, ref$, len$, index, item, results$ = [];
+            for (i$ = 0, len$ = (ref$ = data).length; i$ < len$; ++i$) {
+              index = i$;
+              item = ref$[i$];
+              if (item) {
+                if (isArray(item)) {
+                  if (item = iterate(item)) {
+                    results$.push(buf.push(item));
+                  }
+                } else {
+                  if (item = this$.compile(item)) {
+                    results$.push(buf.push(item));
+                  }
+                }
+              }
+            }
+            return results$;
+          })();
+          return this.processMixins(buf).join(this.separator());
+        };
+        prototype.compileRaw = function(it) {
+          if (isString(it)) {
+            if (isDoctype(it)) {
+              return ht(it).render(this.options);
+            } else {
+              return it;
+            }
+          } else {
+            return it;
+          }
+        };
+        prototype.visitor = function(node) {
+          var buf, name, child, own$ = {}.hasOwnProperty;
+          buf = [];
+          for (name in node) if (own$.call(node, name)) {
+            child = node[name];
+            if (child !== undefined) {
+              name = normalize(name);
+              if ((name === "include" || name === "require") && isString(child)) {
+                buf.push(Engine.render(this.readFile(child), this.options));
+              } else if (isArray(child)) {
+                buf = buf.concat(this.processArray(name, child));
+              } else if (isMixinDefinition(name)) {
+                if (!has(child, "$$attributes")) {
+                  child = {
+                    $$attributes: null,
+                    $$body: child
+                  };
+                }
+                child.$$body = this.visitMixin(child.$$body);
+                this.registerMixin(name, child);
+              } else {
+                buf.push(this.process(name, child));
+              }
+            }
+          }
+          return buf;
+        };
+        prototype.visitMixin = function(it) {
+          var buf, name, node, i$, len$, item, own$ = {}.hasOwnProperty;
+          buf = [];
+          if (isObject(it)) {
+            for (name in it) if (own$.call(it, name)) {
+              node = it[name];
+              buf.push(this.process(name, node));
+            }
+          } else if (isArray(it)) {
+            for (i$ = 0, len$ = it.length; i$ < len$; ++i$) {
+              item = it[i$];
+              buf.push(this.visitor(item));
+            }
+          } else {
+            buf.push(it);
+          }
+          return buf.join(this.separator());
+        };
+        prototype.process = function(name, node) {
+          var attrs;
+          if (node === null) {
+            name = "!" + name;
+          } else if (has(node, "$$attributes")) {
+            attrs = node.$$attributes;
+            node = node.$$body;
+          } else if (isObject(node)) {
+            node = this.visitor(node);
+          }
+          return ht(name, attrs, node);
+        };
+        prototype.processNode = function(it) {
+          if (isObject(it)) {
+            if (it.mixin) {
+              if (isArray(it.body)) {
+                return it.body.join(this.separator());
+              } else {
+                return it.body;
+              }
+            } else {
+              return it.render(this.options);
+            }
+          } else {
+            return it;
+          }
+        };
+        prototype.processArray = function(name, node) {
+          var buf, i$, len$, item;
+          buf = [];
+          if (isArrayStrings(node)) {
+            buf.push(ht.apply(null, [ name, node.join(" ") ]));
+          } else {
+            for (i$ = 0, len$ = node.length; i$ < len$; ++i$) {
+              item = node[i$];
+              if (isObject(item)) {
+                if (item.$$name && item.$$attributes && isUndef(item.$$body)) {
+                  buf.push(this.process(item.$$name, item));
+                } else {
+                  buf.push(ht(name, this.visitor(item)));
+                }
+              } else {
+                buf.push(ht(name, item));
+              }
+            }
+          }
+          return buf;
+        };
+        prototype.processMixins = function(it) {
+          var i$, len$, index, child, name, mixin, callArgs;
+          if (!isArray(it)) {
+            return it;
+          }
+          for (i$ = 0, len$ = it.length; i$ < len$; ++i$) {
+            index = i$;
+            child = it[i$];
+            if (name = isMixinNode(child)) {
+              if (!(mixin = this.mixins[name])) {
+                throw new Error("Missing required mixin: " + name);
+              }
+              if (child.attributes) {
+                callArgs = Object.keys(child.attributes);
+              }
+              it[index] = this.mixinArguments(mixin, callArgs);
+            } else if (isObject(child) && child.childNodes) {
+              it[index]["childNodes"] = this.processMixins(child.childNodes);
+            }
+          }
+          return it;
+        };
+        prototype.mixinArguments = function(mixin, callArgs) {
+          var body, args, defValue, i$, len$, aindex, arg, key;
+          callArgs == null && (callArgs = []);
+          body = mixin.body, args = mixin.args;
+          if (!args) {
+            return body;
+          }
+          defValue = "";
+          for (i$ = 0, len$ = args.length; i$ < len$; ++i$) {
+            aindex = i$;
+            arg = args[i$];
+            if (isObject(arg)) {
+              key = Object.keys(arg)[0];
+              defValue = arg[key] || defValue;
+              arg = key;
+            }
+            body = body.replace("$" + arg, callArgs[aindex] || defValue);
+          }
+          return body;
+        };
+        prototype.registerMixin = function(name, node) {
+          var ref$;
+          name = getMixinName(name);
+          if (!name) {
+            throw new SyntaxError("Missing mixin name identifier");
+          }
+          return ref$ = this.mixins, ref$[name] = {
+            args: getMixinArgs(node),
+            body: node.$$body
+          }, ref$;
+        };
+        prototype.separator = function() {
+          if (this.options.pretty) {
+            return "\n";
+          } else {
+            return "";
+          }
+        };
+        prototype.readFile = function(it) {
+          it = fileExt(it);
+          if (it.charAt(0) !== "/") {
+            it = this.options.basePath + "/" + it;
+          }
+          return fs.readFileSync(it).toString();
+        };
+        return Engine;
+      }();
+      fileExt = function(it) {
+        if (!/\.([a-z\-\_0-9]){0,10}$/i.test(it)) {
+          return it += ".oli";
+        } else {
+          return it;
+        }
+      };
+      mixinNameRegex = /^mixin ([a-z0-9\_\-\.]+)[\s+]?\(?/i;
+      mixinCallRegex = /^\+[\s+]?([a-z0-9\_\-\.]+)[\s+]?\(?/i;
+      getMixinName = function(it) {
+        var name;
+        if (name = it.match(mixinNameRegex)) {
+          return name[1];
+        }
+      };
+      getMixinCall = function(it) {
+        var name;
+        if (name = it.match(mixinCallRegex)) {
+          return name[1];
+        }
+      };
+      getMixinArgs = function(it) {
+        var args, attrs;
+        args = null;
+        if (isObject(it) && isObject(attrs = it.$$attributes)) {
+          args = Object.keys(attrs).map(function(it) {
+            var ref$;
+            if (isUndef(attrs[it])) {
+              return it;
+            } else {
+              return ref$ = {}, ref$[it] = attrs[it], ref$;
+            }
+          });
+        }
+        return args;
+      };
+      mapArguments = function() {};
+      isValid = function(it) {
+        return isObject(it) || isString(it) && it.length;
+      };
+      normalize = function(it) {
+        return it.replace("@", "#");
+      };
+      isDoctype = function(it) {
+        return /^doctype/i.test(it);
+      };
+      isMixinNode = function(it) {
+        if (isObject(it) && isMixinCall(it.tag)) {
+          return getMixinCall(it.tag);
+        } else if (isMixinCall(it)) {
+          return getMixinCall(it);
+        } else {
+          return false;
+        }
+      };
+      isMixinDefinition = function(it) {
+        return /^mixin/i.test(it);
+      };
+      isMixinCall = function(it) {
+        return /^\+/i.test(it);
+      };
+    }, {
+      "./helpers": 2,
+      fs: 4,
+      htgen: 9,
+      oli: 18
+    } ],
+    2: [ function(_dereq_, module, exports) {
       (function(process) {
-        var hasOwn, toString, isBrowser, clone, isUndef, isString, isObject, isArray, has, isArrayStrings;
+        var hasOwn, toString, isBrowser, clone, isUndef, isString, isObject, isArray;
         hasOwn = Object.prototype.hasOwnProperty;
         toString = Object.prototype.toString;
         exports.isBrowser = isBrowser = typeof window !== "undefined";
@@ -78,14 +388,14 @@
         exports.isArray = isArray = function(it) {
           return toString.call(it) === "[object Array]";
         };
-        exports.has = has = function(obj, prop) {
+        exports.has = function(obj, prop) {
           if (!isUndef(obj)) {
             return hasOwn.call(obj, prop);
           } else {
             return false;
           }
         };
-        exports.isArrayStrings = isArrayStrings = function(it) {
+        exports.isArrayStrings = function(it) {
           var i$, len$, item;
           for (i$ = 0, len$ = it.length; i$ < len$; ++i$) {
             item = it[i$];
@@ -95,226 +405,26 @@
           }
           return true;
         };
+        exports.echo = function() {
+          if (console) {
+            return console.log.apply(console, arguments);
+          }
+        };
       }).call(this, _dereq_("/Users/h2non/projects/oml/node_modules/grunt-browserify/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js"));
     }, {
       "/Users/h2non/projects/oml/node_modules/grunt-browserify/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js": 5
     } ],
-    2: [ function(_dereq_, module, exports) {
-      var fs, oli, walk, ht, ref$, isObject, isArray, isString, isUndef, isArrayStrings, cwd, has, oml, exports, defaults, render, visitor, process, processMixin, processArray, readFile, fileExt, getMixinName, getMixinBody, getMixinArgs, normalize, isDoctype, isMixin;
-      fs = _dereq_("fs");
+    3: [ function(_dereq_, module, exports) {
+      var oli, htgen, Engine, exports, ref$;
       oli = _dereq_("oli");
-      walk = _dereq_("./walk");
-      ht = _dereq_("htgen");
-      ref$ = _dereq_("./helpers"), isObject = ref$.isObject, isArray = ref$.isArray, isString = ref$.isString, 
-      isUndef = ref$.isUndef, isArrayStrings = ref$.isArrayStrings, cwd = ref$.cwd, has = ref$.has;
-      oml = exports = module.exports = {};
-      defaults = {
-        basePath: cwd(),
-        locals: null,
-        pretty: false,
-        indent: 2
-      };
-      oml.render = function(code, options) {
-        return render(oli.parse(String(code), options), options);
-      };
-      render = function(obj, options) {
-        var buf, separator;
-        options == null && (options = defaults);
-        buf = [];
-        separator = options.pretty === true ? "\n" : "";
-        if (isObject(obj)) {
-          buf = buf.concat(visitor(obj));
-          buf = buf.filter(function(it) {
-            return isObject(it) || isString(it);
-          }).map(function(it) {
-            if (isObject(it)) {
-              if (it.mixin) {
-                if (isArray(it.body)) {
-                  return it.body.join(separator);
-                } else {
-                  return it.body;
-                }
-              } else {
-                return it.render(options);
-              }
-            } else {
-              return it;
-            }
-          });
-          buf = buf.join(separator);
-        } else {
-          buf = obj;
-          if (isString(obj)) {
-            if (isDoctype(obj)) {
-              buf = ht(obj).render(options);
-            }
-          }
-        }
-        return buf;
-      };
-      visitor = function(node) {
-        var buf, name, child, own$ = {}.hasOwnProperty;
-        buf = [];
-        for (name in node) if (own$.call(node, name)) {
-          child = node[name];
-          if (child !== undefined) {
-            name = normalize(name);
-            if (name === "include" && isString(child)) {
-              buf.push(oml.render(readFile(child)));
-            } else if (isMixin(name)) {
-              buf.push(processMixin(name, child));
-            } else if (isArray(child)) {
-              buf = buf.concat(processArray(name, child));
-            } else {
-              buf.push(process(name, child));
-            }
-          }
-        }
-        return buf;
-      };
-      process = function(name, node) {
-        var attrs;
-        if (node === null) {
-          name = "!" + name;
-        } else if (has(node, "$$attributes")) {
-          attrs = node.$$attributes;
-          node = node.$$body;
-        } else if (isObject(node)) {
-          node = visitor(node);
-        }
-        return ht(name, attrs, node);
-      };
-      processMixin = function(name, node) {
-        var args, body;
-        name = getMixinName(name);
-        if (!name) {
-          throw new SyntaxError("Missing mixin name identifier");
-        }
-        args = getMixinArgs(node);
-        body = getMixinBody(node);
-        return {
-          mixin: name,
-          args: args,
-          body: visitor(body)
-        };
-      };
-      processArray = function(name, node) {
-        var buf, i$, len$, item;
-        buf = [];
-        if (isArrayStrings(node)) {
-          buf.push(ht.apply(null, [ name, node.join(" ") ]));
-        } else {
-          for (i$ = 0, len$ = node.length; i$ < len$; ++i$) {
-            item = node[i$];
-            if (isObject(item)) {
-              if (item.$$name && item.$$attributes && isUndef(item.$$body)) {
-                buf.push(process(item.$$name, item));
-              } else {
-                buf.push(ht(name, visitor(item)));
-              }
-            } else {
-              buf.push(ht(name, item));
-            }
-          }
-        }
-        return buf;
-      };
-      readFile = function(it) {
-        it = fileExt(it);
-        if (it.charAt(0) !== "/") {
-          it = cwd() + "/" + it;
-        }
-        return fs.readFileSync(it).toString();
-      };
-      fileExt = function(it) {
-        if (!/\.([a-z\-\_0-9]){0,10}$/i.test(it)) {
-          return it += ".oli";
-        } else {
-          return it;
-        }
-      };
-      getMixinName = function(it) {
-        var name;
-        if (name = it.match(/^mixin ([a-z0-9\_\-\.]+)(\s+)?\(?/i)) {
-          return name[1];
-        }
-      };
-      getMixinBody = function(it) {
-        if (it && it.$$attributes) {
-          return it.$$body;
-        } else {
-          return it;
-        }
-      };
-      getMixinArgs = function(it) {
-        var args;
-        args = null;
-        if (isObject(it)) {
-          if (isObject(it.$$attributes)) {
-            args = Object.keys(it.$$attributes);
-          } else if (isArray(it.$$attributes)) {
-            args = [];
-            it.$$attributes.map(function(it) {
-              return args.push(Object.keys(it));
-            });
-          }
-        }
-        return args;
-      };
-      normalize = function(it) {
-        return it.replace("@", "#");
-      };
-      isDoctype = function(it) {
-        return /^doctype/i.test(it);
-      };
-      isMixin = function(it) {
-        return /^mixin/i.test(it);
-      };
+      htgen = _dereq_("htgen");
+      Engine = _dereq_("./engine");
+      exports = (ref$ = module.exports, ref$.oli = oli, ref$.htgen = htgen, ref$.Engine = Engine, 
+      ref$.render = Engine.render, ref$);
     }, {
-      "./helpers": 1,
-      "./walk": 3,
-      fs: 4,
+      "./engine": 1,
       htgen: 9,
       oli: 18
-    } ],
-    3: [ function(_dereq_, module, exports) {
-      var isArray, exports, walk;
-      isArray = _dereq_("./helpers").isArray;
-      exports = module.exports = function(obj) {
-        return function(cb) {
-          return walk(obj, undefined, cb);
-        };
-      };
-      walk = function(node, parent, cb) {
-        var keys, i, key, child, j, c;
-        keys = Object.keys(node);
-        i = 0;
-        while (i < keys.length) {
-          key = keys[i];
-          if (key === "parent") {
-            continue;
-          }
-          child = node[key];
-          if (isArray(child)) {
-            j = 0;
-            while (j < child.length) {
-              c = child[j];
-              if (c && typeof c.type === "string") {
-                c.parent = node;
-                walk(c, node, cb);
-              }
-              j += 1;
-            }
-          } else if (child && typeof child.type === "string") {
-            child.parent = node;
-            walk(child, node, cb);
-          }
-          i += 1;
-        }
-        return cb(node);
-      };
-    }, {
-      "./helpers": 1
     } ],
     4: [ function(_dereq_, module, exports) {}, {} ],
     5: [ function(_dereq_, module, exports) {
@@ -8380,5 +8490,5 @@
       "./helpers": 16,
       "./tokens": 20
     } ]
-  }, {}, [ 2 ])(2);
+  }, {}, [ 3 ])(3);
 });
