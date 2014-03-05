@@ -14,6 +14,7 @@ html:
   body:
     # use a reference that points to 'title'
     h1.head: *title 
+    img(src: 'image.png')
     # use the shortcuts for class and id attributes definition
     .container@main (title: 'Main container'):
       p.text:

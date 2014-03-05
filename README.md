@@ -12,7 +12,7 @@ built on top of the [Oli][oli] language which runs in node and the browser
 
 It's powered by [oli.js][oli-js] and [htgen][htgen]
 
-You can try it online [here](http://jsfiddle.net/7LvYd/2)
+You can try it online [here](http://jsfiddle.net/7LvYd/3)
 
 ### Featured Example
 
@@ -268,15 +268,17 @@ end
 
 ### Includes
 
+Load and include content from a file in the document
 ```ruby
 include: path/to/file.oli
 ```
 
 ### Requires
 
-Load and append source in the current document. 
-The only significant difference with `include` is that `require` required 
-file is loaded in a isolated sandbox context
+Load and include source in the current document. 
+The only significant difference between `require` and `include` is that the 
+file is loaded in an isolated sandbox context (it cannot share variables, mixins between documents)
+
 ```ruby
 require: path/to/file.oli
 ```

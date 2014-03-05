@@ -1,4 +1,4 @@
-/*! oml.js - v0.1.0 - MIT License - https://github.com/h2non/oml | Generated 2014-03-05 01:19 */
+/*! oml.js - v0.1.0 - MIT License - https://github.com/h2non/oml | Generated 2014-03-05 10:25 */
 !function(e) {
   if ("object" == typeof exports) module.exports = e(); else if ("function" == typeof define && define.amd) define(e); else {
     var f;
@@ -165,6 +165,9 @@
             node = node.$$body;
           } else if (isObject(node)) {
             node = this.visitor(node);
+          }
+          if (isArray(node)) {
+            console.log("IS ARRAY >", node);
           }
           return ht(name, attrs, node);
         };

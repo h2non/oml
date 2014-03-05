@@ -28,7 +28,7 @@ describe 'Render', ->
 
   describe 'self-closed', (_) ->
 
-    xit 'should render as self-closed tag', ->
+    it 'should render as self-closed tag', ->
       expect render '!img' .to.be.equal '<img/>'
 
     it 'should render as self-closed tag', ->
@@ -39,6 +39,12 @@ describe 'Render', ->
 
     it 'should render "img: nil" self-closed tag', ->
       expect render 'img: nil' .to.be.equal '<img/>'
+
+    it 'should render a "br" tag as self closed', ->
+      expect render 'br' .to.be.equal '<br/>'
+
+    it 'should render a "hr" tag as self closed', ->
+      expect render 'input' .to.be.equal '<input/>'
 
   describe 'blocks', (_) ->
 
@@ -432,3 +438,27 @@ describe 'Render', ->
     
     it 'should have code in the script tag', ->
       expect result .to.match /if \(foo\) \{\n  bar\(2 \^ 2\)/
+
+    it 'should have a body tag', ->
+      expect result .to.match /<body>/
+
+    it 'should have a h1 tag with head class attribute', ->
+      expect result .to.match /<h1 class=\"head\">/
+
+    it 'should have a img self-closed tag with the proper attribute', ->
+      expect result .to.match /<img src=\"image.png\"\/>/
+
+    it 'should have a div tag with container class and id attributes', ->
+      expect result .to.match /<div class="container" id="main" title="Main container">/
+
+    it 'should have a p tag with text class attribute', ->
+      expect result .to.match /<p class=\"text\">/
+
+    it 'should have a p tag with the propert text content', ->
+      expect result .to.match /A template engine built on top of the Oli language/
+
+    it 'should have an a tag with the href attribute', ->
+      expect result .to.match /<a href="https\:\/\/github.com\/h2non\/oml\#syntax\-reference">/
+
+    it 'should have an textarea', ->
+      expect result .to.match /<textarea>Lorem ipsum ad/

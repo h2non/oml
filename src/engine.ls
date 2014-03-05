@@ -1,6 +1,7 @@
 require! {
   fs
   oli
+  './tags'
   ht: 'htgen'
 }
 { is-object, is-array, is-string, is-undef, is-array-strings, extend, clone, has, cwd } = require './helpers'
@@ -55,6 +56,10 @@ exports = module.exports = class Engine
     if it |> is-string
       if it |> is-doctype
         (it |> ht).render @options
+      else if (it |> is-self-closed)
+        ("!#{it}" |> ht).render @options
+      else if it.char-at(0) is '!'
+        (it |> ht).render @options
       else
         it
     else
@@ -82,7 +87,6 @@ exports = module.exports = class Engine
     if it |> is-object
       for own name, node of it then node |> @process name, _ |> buf.push
     else if it |> is-array
-      # to do
       for item in it then item |> @visitor |> buf.push
     else
       it |> buf.push
@@ -94,8 +98,13 @@ exports = module.exports = class Engine
     else if node |> has _, '$$attributes'
       attrs = node.$$attributes
       node = node.$$body
+      if node |> is-array
+        node = node.map -> it |> @visitor
+      else if node |> is-object
+        node = node |> @visitor
     else if node |> is-object
       node = node |> @visitor
+    name = "!#{name}" if name |> is-self-closed
     ht name, attrs, node
 
   process-node: ->
@@ -163,21 +172,21 @@ exports = module.exports = class Engine
 
   read-file: ->
     it = it |> file-ext
-    it = "#{@options.base-path}/#{it}" if it.charAt(0) isnt '/'
+    it = "#{@options.base-path}/#{it}" if it.char-at(0) isnt '/'
     (it |> fs.read-file-sync).to-string!
 
 #
 # helpers
 #
 
+mixin-name-regex = /^mixin ([a-z0-9\_\-\.]+)[\s+]?\(?/i
+mixin-call-regex = /^\+[\s+]?([a-z0-9\_\-\.]+)[\s+]?\(?/i
+
 file-ext = ->
   if not (/\.([a-z\-\_0-9]){0,10}$/i.test it)
     it += '.oli'
   else
     it
-
-mixin-name-regex = /^mixin ([a-z0-9\_\-\.]+)[\s+]?\(?/i
-mixin-call-regex = /^\+[\s+]?([a-z0-9\_\-\.]+)[\s+]?\(?/i
 
 get-mixin-name = ->
   name[1] if name = it.match mixin-name-regex
@@ -196,6 +205,8 @@ get-mixin-args = ->
   args
 
 is-valid = -> (it |> is-object) or ((it |> is-string) and it.length)  
+
+is-self-closed = -> (it |> tags.index-of) isnt -1
 
 normalize = -> it.replace '@', '#'
 
