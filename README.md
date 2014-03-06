@@ -82,7 +82,7 @@ $ npm install -g omljs
 #### Browser 
 
 ```
-$ bower install oml --save
+$ bower install oml
 ```
 
 Or load the script remotely (just for testing or development)
