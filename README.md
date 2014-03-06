@@ -11,7 +11,7 @@
 built on top of the [Oli][oli] language which runs in node and the browser.
 It's powered by [oli.js][oli-js] and [htgen][htgen]
 
-You can try it online [here](http://jsfiddle.net/7LvYd/3)
+You can try it online [here](http://jsfiddle.net/7LvYd/4)
 
 ### Overview Example
 
