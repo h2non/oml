@@ -280,7 +280,7 @@ div:
 end
 ```
 
-Using pipe expression
+Using pipe block expression
 ```ruby
 div:
   | p: This is a plain <strong>text</strong>
@@ -304,9 +304,9 @@ include: path/to/file.oli
 
 ### Requires
 
-Load and include source in the current document. 
-The only significant difference between `require` and `include` is that the 
-file is loaded in an isolated sandbox context (it cannot share variables, mixins between documents)
+`require` is like `include`, the unique significant difference between both are that `require` 
+load and render the file in an isolated sandbox context, so that means you cannot 
+share variables or mixins between documents
 
 ```ruby
 require: path/to/file.oli
