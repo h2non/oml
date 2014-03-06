@@ -219,7 +219,7 @@ end
 
 Self-closed tags
 ```ruby
-img! # => <img/>
+!img # => <img/>
 ```
 ```ruby
 img(src: 'image.png') # => <img src="image.png"/>
