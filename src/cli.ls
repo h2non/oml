@@ -40,7 +40,7 @@ program
   .on('tabs', -> options.pretty = options.tabs = true)
   .on('pretty', -> options.pretty = true)
   .on 'indent', (size) ->
-    options.indent = if size is null then 2 else parseInt size, 10
+    options.indent = if size is null then 2 else (size |> parseInt _, 10)
     options.pretty = true
 
 init = ->
@@ -65,11 +65,8 @@ stdin = ->
 getSource = ->
   if options.in-line
     source = program.args.join ' '
-  else 
-    if program.args
-      source = program.args.map(->
-        fs.readFileSync it
-      ).join ' '
+  else if program.args
+    source = program.args.map fs.readFileSync .join ' '
   source
 
 output = ->

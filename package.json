@@ -38,7 +38,7 @@
   ],
   "dependencies": {
     "htgen": "~0.1.4",
-    "commander": "~2.1.0",
+    "commander": "~2.2.0",
     "oli": "~0.1.0"
   },
   "devDependencies": {

@@ -65,9 +65,9 @@ exports = module.exports = class Engine
     else
       it
 
-  visitor: (node) ->
+  visitor: ->
     buf = []
-    for own name, child of node when child isnt undefined then
+    for own name, child of it when child isnt undefined then
       name = name |> normalize
       if (name is 'include' or name is 'require') and (child |> is-string)
         child |> @read-file |> Engine.render _, @options |> buf.push
@@ -124,7 +124,7 @@ exports = module.exports = class Engine
     if node |> is-array-strings
       (ht.apply null, [ name, (node.join ' ') ]) |> buf.push
     else
-      for item in node
+      for item in node then
         if item |> is-object
           if item.$$name and item.$$attributes and (item.$$body |> is-undef)
             item |> @process item.$$name, _ |> buf.push
@@ -136,14 +136,13 @@ exports = module.exports = class Engine
 
   process-mixins: ->
     return it if not (it |> is-array)
-    for child, index in it  
-      then
-        if name = child |> is-mixin-node
-          throw new Error "Missing required mixin: #{name}" if not (mixin = @mixins[name])
-          call-args = child.attributes |> Object.keys if child.attributes
-          it[index] = mixin |> @mixin-arguments _, call-args
-        else if (child |> is-object) and (child.child-nodes)
-          it[index]['childNodes'] = (child.child-nodes |> @process-mixins)
+    for child, index in it then
+      if name = child |> is-mixin-node
+        throw new Error "Missing required mixin: #{name}" if not (mixin = @mixins[name])
+        call-args = child.attributes |> Object.keys if child.attributes
+        it[index] = mixin |> @mixin-arguments _, call-args
+      else if (child |> is-object) and (child.child-nodes)
+        it[index]['childNodes'] = (child.child-nodes |> @process-mixins)
     it
 
   mixin-arguments: (mixin, call-args = []) ->
