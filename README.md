@@ -1,7 +1,5 @@
-# oml
-[![Build Status](https://travis-ci.org/h2non/oml.png)](https://travis-ci.org/h2non/oml)
-[![Dependency Status](https://gemnasium.com/h2non/oml.png)](https://gemnasium.com/h2non/oml)
-[![NPM version](https://badge.fury.io/js/omljs.png)](http://badge.fury.io/js/omljs)
+# oml [![Build Status](https://travis-ci.org/h2non/oml.png)](https://travis-ci.org/h2non/oml) [![Dependency Status](https://gemnasium.com/h2non/oml.png)](https://gemnasium.com/h2non/oml) [![NPM version](https://badge.fury.io/js/omljs.png)](http://badge.fury.io/js/omljs)
+
 
 > Note that oml is still a just-for-fun beta project
 
@@ -25,7 +23,7 @@ html:
     &title: This is oml!
     script:>
       if (foo) {
-        bar(2 ^ 2)
+        bar(2 + 2)
       }
     end
   end
